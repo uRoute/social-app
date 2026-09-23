@@ -1,0 +1,23 @@
+<app-navbar></app-navbar>
+
+
+<div class="bg-white flex flex-col gap-3 lg:flex-row items-center justify-between  p-4 rounded-3xl w-3/4 mx-auto my-4">
+
+    <div class="w-full p-2 lg:w-1/2">
+        <h1 class="text-4xl font-bold text-mainColor"> Social-App </h1>
+        <p class="text-2xl text-mist-400">Your pocket-sized social life.</p>
+    </div>
+    <div class="w-full p-2 lg:w-1/2">
+        <div
+            class="bg-secondColor  p-1 rounded-2xl gap-2 border-2 border-gray-200 flex flex-row justify-between items-center">
+            <button class="block text-gray-600 p-2 font-extrabold rounded-2xl w-1/2 cursor-pointer"
+                routerLinkActive="text-mainColor bg-white" routerLink="/login">Login</button>
+            <button class="block text-gray-600 p-2 font-extrabold rounded-2xl w-1/2 cursor-pointer"
+                routerLinkActive="text-mainColor bg-white" routerLink="/register">Register</button>
+        </div>
+        <div class="mt-3">
+            <router-outlet></router-outlet>
+        </div>
+    </div>
+
+</div>

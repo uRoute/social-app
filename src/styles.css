@@ -1,0 +1,24 @@
+/* You can add global styles to this file, and also import other style files */
+@import "tailwindcss";
+@import "flowbite/src/themes/default";
+@plugin "flowbite/plugin";
+@source "../node_modules/flowbite";
+
+@utility container {
+    margin-inline:auto;
+}
+
+@theme{
+    --color-mainColor:#00298D;
+    --color-secondColor:#F0F2F5;
+}
+
+@font-face {
+    font-family: "default-font";
+    src: url(./../public/Fonts/Fira_Sans/FiraSans-Regular.ttf);
+}
+
+body{
+    background-color: var(--color-secondColor);
+    font-family: "default-font";
+}
