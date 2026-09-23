@@ -1,1 +1,78 @@
-<p>login works!</p>
+<section class="p-1">
+    <div>
+        <h1 class="text-2xl font-black main-text-colors"> <span class="">Login</span> </h1>
+    </div>
+
+    <div>
+        <form [formGroup]="loginForm" (ngSubmit)="login()">
+            <div class="text-gray-600">
+                
+                <div class="my-2">
+                    @let userEmail = loginForm.get('email');
+                    <label for="email" class="block mb-2.5 text-sm font-medium text-heading">Email</label>
+                    <input [class]="{
+                        'input-valid' : userEmail?.errors && userEmail?.touched,
+                        'input-invalid' : !userEmail?.errors && userEmail?.touched
+                    }" type="email" id="email" formControlName="email"
+                        class="bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-base focus:ring-brand focus:border-brand block w-full px-3 py-2.5 shadow-xs placeholder:text-body"
+                        placeholder="email.com" />
+
+                    @if(userEmail?.errors && userEmail?.touched){
+                    <div class="flex items-start sm:items-center p-4 my-3 text-sm text-fg-danger-strong rounded-base bg-danger-soft"
+                        role="alert">
+                        <svg class="w-4 h-4 me-2 shrink-0 mt-0.5 sm:mt-0" aria-hidden="true"
+                            xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M10 11h2v5m-2 0h4m-2.592-8.5h.01M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                        </svg>
+                        @if(userEmail?.getError('required')){<p>-Email is required.</p>}
+                        @if(userEmail?.getError('email')){<p>-Please enter a valid email address.</p>}
+                    </div>
+                    }
+                </div>
+              
+              
+                <div class="my-2">
+                    @let userPassword = loginForm.get('password');
+                    <label for="password" class="block mb-2.5 text-sm font-medium text-heading">Password</label>
+                    <input [class]="{
+                    'input-valid' : userPassword?.errors && userPassword?.touched,
+                    'input-invalid' : !userPassword?.errors && userPassword?.touched
+                }" autocomplete="off" type="password" id="password" formControlName="password"
+                        class="bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-base focus:ring-brand focus:border-brand block w-full px-3 py-2.5 shadow-xs placeholder:text-body"
+                        placeholder="pass***" required />
+                    @if(userPassword?.errors && userPassword?.touched){
+                    <div class="flex items-start sm:items-center p-4 my-3 text-sm text-fg-danger-strong rounded-base bg-danger-soft"
+                        role="alert">
+                        <svg class="w-4 h-4 me-2 shrink-0 mt-0.5 sm:mt-0" aria-hidden="true"
+                            xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M10 11h2v5m-2 0h4m-2.592-8.5h.01M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                        </svg>
+                        @if(userPassword?.getError('required')){<p>-Password is required.</p>}
+                        @if(userPassword?.getError('minlength')){<p>-Password must be at least 8 characters long.</p>}
+                        @if(userPassword?.getError('pattern')){<p>-Password must contain UPPERCASE, lowercase and
+                            numbers
+                        </p>}
+                    </div>
+                    }
+                </div>
+                
+            </div>
+            @if(resMessage){
+            <div class="bg-rose-300 w-1/2 mx-auto text-center p-3 text-2xl font-bold text-white rounded-xl">
+                <p class=""> {{resMessage}} </p>
+            </div>
+            }
+            <div class="w-3/4 mx-auto my-1">
+                <button [disabled]="loginForm.invalid" class="form-btn">
+                    @if(isSpinner){<i class="fa-solid fa-circle-notch fa-spin-snap-8"></i>}
+                    @else {<i class="fa-solid fa-right-to-bracket"></i>Login}
+                </button>
+            </div>
+
+        </form>
+    </div>
+
+
+</section>

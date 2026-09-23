@@ -7,10 +7,10 @@ import { environment } from '../../../../../environments/environment.development
   providedIn: 'root',
 })
 export class LoginService {
-  private readonly _HttpClient = inject(HttpClient)
+    private readonly _HttpClient = inject(HttpClient)
 
-  SignUp(formData:object):Observable<any>{
-    return this._HttpClient.post(`${environment.baseURL}/users/signup` , formData )
+  SignIn(formData:object):Observable<any>{
+    return this._HttpClient.post(`${environment.baseURL}/users/signin` , formData )
   }
 
 }

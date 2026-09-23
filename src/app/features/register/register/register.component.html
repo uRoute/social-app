@@ -1,76 +1,186 @@
 <section class="p-1">
-
+    <div>
+        <h1 class="text-2xl font-black main-text-colors"> <span class="">Create an account</span> </h1>
+        <p class="text-gray-700 text-sm">
+            Ready to find your crew and share your world?
+        </p>
+    </div>
 
     <div>
         <form [formGroup]="registerForm" (ngSubmit)="submitRegisterForm()">
-            <div class="p-2 text-gray-600">
-                <div class="relative my-2">
-                    <input type="text" id="fullName" formControlName="name"
-                        class="block px-2.5 pb-2.5 pt-4 w-full text-sm text-heading bg-transparent rounded-base border-1 border-default-medium appearance-none focus:outline-none focus:ring-0 focus:border-brand peer"
-                        placeholder="Full Name" />
-                    <label for="fullName"
-                        class="absolute text-sm text-body duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-neutral-primary px-2 peer-focus:px-2 peer-focus:text-fg-brand peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto start-1">Full-name</label>
+            <div class="text-gray-600">
+                <div class="my-2">
+                    @let name = registerForm.get('name');
+                    <label for="name" class="block mb-2.5 text-sm font-medium text-heading">Full Name</label>
+                    <input [class]="{
+                        'input-valid' : name?.errors && name?.touched,
+                        'input-invalid' : !name?.errors && name?.touched
+                    } " type="text" id="name" formControlName="name"
+                        class="bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-base focus:ring-brand focus:border-brand block w-full px-3 py-2.5 shadow-xs placeholder:text-body"
+                        placeholder=" Full name " />
+                    @if(name?.errors && name?.touched){
+                    <div class="flex items-start sm:items-center p-4 my-3 text-sm text-fg-danger-strong rounded-base bg-danger-soft"
+                        role="alert">
+                        <svg class="w-4 h-4 me-2 shrink-0 mt-0.5 sm:mt-0" aria-hidden="true"
+                            xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M10 11h2v5m-2 0h4m-2.592-8.5h.01M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                        </svg>
+                        @if(name?.getError('required')){<p>-Name is required.</p>}
+                        @if(name?.getError('minlength')){<p>-Name must be at least 3 characters long.</p>}
+                        @if(name?.getError('maxlength')){<p>-Name must be at most 20 characters long.</p>}
+                        @if(name?.getError('pattern')){<p>-Each name of Your fullName must start with a capital letter
+                            and contain only letters and spaces.</p>}
+                    </div>
+                    }
                 </div>
-                <div class="relative my-2">
-                    <input type="text" id="userName" formControlName="username"
-                        class="block px-2.5 pb-2.5 pt-4 w-full text-sm text-heading bg-transparent rounded-base border-1 border-default-medium appearance-none focus:outline-none focus:ring-0 focus:border-brand peer"
-                        placeholder="@ user_name (Optional)" />
-                    <label for="userName"
-                        class="absolute text-sm text-body duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-neutral-primary px-2 peer-focus:px-2 peer-focus:text-fg-brand peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto start-1">@User_Name</label>
+                <div class="my-2">
+                    @let userName = registerForm.get('username');
+                    <label for="username" class="block mb-2.5 text-sm font-medium text-heading">User Name</label>
+                    <input [class]="{
+                        'input-valid' : userName?.errors && userName?.touched,
+                        'input-invalid' : !userName?.errors && userName?.touched
+                    }" type="text" id="username" formControlName="username"
+                        class="bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-base focus:ring-brand focus:border-brand block w-full px-3 py-2.5 shadow-xs placeholder:text-body"
+                        placeholder="@User_Name (optional)" />
+                    @if(userName?.errors && userName?.touched){
+                    <div class="flex items-start sm:items-center p-4 my-3 text-sm text-fg-danger-strong rounded-base bg-danger-soft"
+                        role="alert">
+                        <svg class="w-4 h-4 me-2 shrink-0 mt-0.5 sm:mt-0" aria-hidden="true"
+                            xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M10 11h2v5m-2 0h4m-2.592-8.5h.01M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                        </svg>
+                        @if(userName?.getError('required')){<p>-User name is required.</p>}
+                        @if(userName?.getError('minlength')){<p>-User name must be at least 3 characters long.</p>}
+                        @if(userName?.getError('maxlength')){<p>-User name must be at most 15 characters long.</p>}
+                        @if(userName?.getError('pattern')){<p>-User name must contain only lower letters, numbers,
+                            and {{ spChars }} .</p>}
+                    </div>
+                    }
                 </div>
-                <div class="relative my-2">
-                    <input type="email" id="email" formControlName="email"
-                        class="block px-2.5 pb-2.5 pt-4 w-full text-sm text-heading bg-transparent rounded-base border-1 border-default-medium appearance-none focus:outline-none focus:ring-0 focus:border-brand peer"
-                        placeholder="email" />
-                    <label for="email"
-                        class="absolute text-sm text-body duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-neutral-primary px-2 peer-focus:px-2 peer-focus:text-fg-brand peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto start-1">Email</label>
-                </div>
-                <div class="relative my-2">
-                    <input type="date" id="dateOfBirth" formControlName="dateOfBirth"
-                        class="block px-2.5 pb-2.5 pt-4 w-full text-sm text-heading bg-transparent rounded-base border-1 border-default-medium appearance-none focus:outline-none focus:ring-0 focus:border-brand peer"
-                        placeholder="date of birth" />
-                    <label for="dateOfBirth"
-                        class="absolute text-sm text-body duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-neutral-primary px-2 peer-focus:px-2 peer-focus:text-fg-brand peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto start-1">Date
-                        of Birth</label>
+                <div class="my-2">
+                    @let userEmail = registerForm.get('email');
+                    <label for="email" class="block mb-2.5 text-sm font-medium text-heading">Email</label>
+                    <input [class]="{
+                        'input-valid' : userEmail?.errors && userEmail?.touched,
+                        'input-invalid' : !userEmail?.errors && userEmail?.touched
+                    }" type="email" id="email" formControlName="email"
+                        class="bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-base focus:ring-brand focus:border-brand block w-full px-3 py-2.5 shadow-xs placeholder:text-body"
+                        placeholder="email.com" />
+
+                    @if(userEmail?.errors && userEmail?.touched){
+                    <div class="flex items-start sm:items-center p-4 my-3 text-sm text-fg-danger-strong rounded-base bg-danger-soft"
+                        role="alert">
+                        <svg class="w-4 h-4 me-2 shrink-0 mt-0.5 sm:mt-0" aria-hidden="true"
+                            xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M10 11h2v5m-2 0h4m-2.592-8.5h.01M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                        </svg>
+                        @if(userEmail?.getError('required')){<p>-Email is required.</p>}
+                        @if(userEmail?.getError('email')){<p>-Please enter a valid email address.</p>}
+                    </div>
+                    }
                 </div>
                 <div class="flex flex-wrap flex-col md:flex-row justify-center gap-2 items-center p-2">
                     <h3 class="w-full">Choose Your Gender <i class="fa-solid fa-person-half-dress"></i></h3>
-
-                    <div class="flex  w-full md:w-1/4 items-center p-1 border border-default bg-neutral-primary-soft rounded-base">
-                        <input id="male" type="radio" value="male" name="gender"
+                    <div
+                        class="flex  w-full md:w-1/4 items-center p-1 border border-default bg-neutral-primary-soft rounded-base">
+                        <input checked formControlName="gender" id="male" type="radio" value="male" name="gender"
                             class="w-4 h-4 text-neutral-primary border-default-medium bg-neutral-secondary-medium rounded-full checked:border-brand focus:ring-2 focus:outline-none focus:ring-brand-subtle border border-default appearance-none">
                         <label for="male"
                             class="w-full p-1 select-none ms-2 text-sm font-medium text-heading">Male</label>
                     </div>
-                    <div class="flex  w-full md:w-1/4 items-center p-1 border border-default bg-neutral-primary-soft rounded-base">
-                        <input checked id="female" type="radio" value="female" name="gender"
+                    <div
+                        class="flex  w-full md:w-1/4 items-center p-1 border border-default bg-neutral-primary-soft rounded-base">
+                        <input formControlName="gender" id="female" type="radio" value="female" name="gender"
                             class="w-4 h-4 text-neutral-primary border-default-medium bg-neutral-secondary-medium rounded-full checked:border-brand focus:ring-2 focus:outline-none focus:ring-brand-subtle border border-default appearance-none">
                         <label for="female"
                             class="w-full p-1 select-none ms-2 text-sm font-medium text-heading">Female</label>
                     </div>
-
-
                 </div>
-                <div class="relative my-2">
-                    <input type="text" id="password" formControlName="password"
-                        class="block px-2.5 pb-2.5 pt-4 w-full text-sm text-heading bg-transparent rounded-base border-1 border-default-medium appearance-none focus:outline-none focus:ring-0 focus:border-brand peer"
-                        placeholder="Full Name" />
-                    <label for="password"
-                        class="absolute text-sm text-body duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-neutral-primary px-2 peer-focus:px-2 peer-focus:text-fg-brand peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto start-1">Full-name</label>
+                <div class="my-2">
+                    @let userDate = registerForm.get('dateOfBirth');
+                    <label for="dateOfBirth" class="block mb-2.5 text-sm font-medium text-heading">Date of birth</label>
+                    <input [class]="{
+                    'input-valid' : userDate?.errors && userDate?.touched,
+                    'input-invalid' : !userDate?.errors && userDate?.touched
+                }" type="date" id="dateOfBirth" formControlName="dateOfBirth"
+                        class="bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-base focus:ring-brand focus:border-brand block w-full px-3 py-2.5 shadow-xs placeholder:text-body"
+                        placeholder="Date of Birth" />
+                    @if(userDate?.errors && userDate?.touched){
+                    <div class="flex items-start sm:items-center p-4 my-3 text-sm text-fg-danger-strong rounded-base bg-danger-soft"
+                        role="alert">
+                        <svg class="w-4 h-4 me-2 shrink-0 mt-0.5 sm:mt-0" aria-hidden="true"
+                            xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M10 11h2v5m-2 0h4m-2.592-8.5h.01M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                        </svg>
+                        @if(userDate?.getError('required')){<p>-Date of birth is required.</p>}
+                    </div>
+                    }
                 </div>
-                <div class="relative my-2">
-                    <input type="text" id="rePassword" formControlName="rePassword"
-                        class="block px-2.5 pb-2.5 pt-4 w-full text-sm text-heading bg-transparent rounded-base border-1 border-default-medium appearance-none focus:outline-none focus:ring-0 focus:border-brand peer"
-                        placeholder="Full Name" />
-                    <label for="rePassword"
-                        class="absolute text-sm text-body duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-neutral-primary px-2 peer-focus:px-2 peer-focus:text-fg-brand peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto start-1">Full-name</label>
+                <div class="my-2">
+                    @let userPassword = registerForm.get('password');
+                    <label for="password" class="block mb-2.5 text-sm font-medium text-heading">Password</label>
+                    <input [class]="{
+                    'input-valid' : userPassword?.errors && userPassword?.touched,
+                    'input-invalid' : !userPassword?.errors && userPassword?.touched
+                }" autocomplete="off" type="password" id="password" formControlName="password"
+                        class="bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-base focus:ring-brand focus:border-brand block w-full px-3 py-2.5 shadow-xs placeholder:text-body"
+                        placeholder="pass***" required />
+                    @if(userPassword?.errors && userPassword?.touched){
+                    <div class="flex items-start sm:items-center p-4 my-3 text-sm text-fg-danger-strong rounded-base bg-danger-soft"
+                        role="alert">
+                        <svg class="w-4 h-4 me-2 shrink-0 mt-0.5 sm:mt-0" aria-hidden="true"
+                            xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M10 11h2v5m-2 0h4m-2.592-8.5h.01M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                        </svg>
+                        @if(userPassword?.getError('required')){<p>-Password is required.</p>}
+                        @if(userPassword?.getError('minlength')){<p>-Password must be at least 8 characters long.</p>}
+                        @if(userPassword?.getError('pattern')){<p>-Password must contain UPPERCASE, lowercase and
+                            numbers
+                        </p>}
+                    </div>
+                    }
                 </div>
+                <div class="my-2">
+                    @let userRePassword = registerForm.get('rePassword');
+                    <label for="rePassword" class="block mb-2.5 text-sm font-medium text-heading">Confirm
+                        password</label>
+                    <input [class]="{
+                    'input-valid' : (registerForm.errors || userRePassword?.errors) && userRePassword?.touched,
+                    'input-invalid' : !(registerForm.errors || userRePassword?.errors) && userRePassword?.touched
+                }" autocomplete="off" type="password" id="rePassword" formControlName="rePassword"
+                        class="bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-base focus:ring-brand focus:border-brand block w-full px-3 py-2.5 shadow-xs placeholder:text-body"
+                        placeholder="pass***" required />
 
+                    @if((registerForm.errors || userRePassword?.errors) && userRePassword?.touched){
+                    <div class="flex items-start sm:items-center p-4 my-3 text-sm text-fg-danger-strong rounded-base bg-danger-soft"
+                        role="alert">
+                        <svg class="w-4 h-4 me-2 shrink-0 mt-0.5 sm:mt-0" aria-hidden="true"
+                            xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M10 11h2v5m-2 0h4m-2.592-8.5h.01M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                        </svg>
+                        @if(userRePassword?.getError('required')){<p>-RePassword is required.</p>}
+                        @if(registerForm.getError('missmatch')){<p>-Not match.</p>}
+                        @if(userRePassword?.getError('pattern')){<p>-RePassword must contain UPPERCASE, lowercase and
+                            numbers</p>}
+                    </div>
+                    }
+                </div>
             </div>
+            @if(resMessage){
+            <div class="bg-rose-300 w-1/2 mx-auto text-center p-3 text-2xl font-bold text-white rounded-xl">
+                <p class=""> {{resMessage}} </p>
+            </div>
+            }
             <div class="w-3/4 mx-auto my-1">
-                <button class="form-btn">
-                    <i class="fa-solid fa-circle-notch fa-spin-snap-8"></i>
-                    <i class="fa-regular fa-address-card"></i>Register
+                <button [disabled]="registerForm.invalid" class="form-btn">
+                    @if(isSpinner){<i class="fa-solid fa-circle-notch fa-spin-snap-8"></i>}
+                    @else {<i class="fa-regular fa-address-card"></i>Register}
                 </button>
             </div>
 
