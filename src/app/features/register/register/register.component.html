@@ -1,1 +1,81 @@
-<p>register works!</p>
+<section class="p-1">
+
+
+    <div>
+        <form [formGroup]="registerForm" (ngSubmit)="submitRegisterForm()">
+            <div class="p-2 text-gray-600">
+                <div class="relative my-2">
+                    <input type="text" id="fullName" formControlName="name"
+                        class="block px-2.5 pb-2.5 pt-4 w-full text-sm text-heading bg-transparent rounded-base border-1 border-default-medium appearance-none focus:outline-none focus:ring-0 focus:border-brand peer"
+                        placeholder="Full Name" />
+                    <label for="fullName"
+                        class="absolute text-sm text-body duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-neutral-primary px-2 peer-focus:px-2 peer-focus:text-fg-brand peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto start-1">Full-name</label>
+                </div>
+                <div class="relative my-2">
+                    <input type="text" id="userName" formControlName="username"
+                        class="block px-2.5 pb-2.5 pt-4 w-full text-sm text-heading bg-transparent rounded-base border-1 border-default-medium appearance-none focus:outline-none focus:ring-0 focus:border-brand peer"
+                        placeholder="@ user_name (Optional)" />
+                    <label for="userName"
+                        class="absolute text-sm text-body duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-neutral-primary px-2 peer-focus:px-2 peer-focus:text-fg-brand peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto start-1">@User_Name</label>
+                </div>
+                <div class="relative my-2">
+                    <input type="email" id="email" formControlName="email"
+                        class="block px-2.5 pb-2.5 pt-4 w-full text-sm text-heading bg-transparent rounded-base border-1 border-default-medium appearance-none focus:outline-none focus:ring-0 focus:border-brand peer"
+                        placeholder="email" />
+                    <label for="email"
+                        class="absolute text-sm text-body duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-neutral-primary px-2 peer-focus:px-2 peer-focus:text-fg-brand peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto start-1">Email</label>
+                </div>
+                <div class="relative my-2">
+                    <input type="date" id="dateOfBirth" formControlName="dateOfBirth"
+                        class="block px-2.5 pb-2.5 pt-4 w-full text-sm text-heading bg-transparent rounded-base border-1 border-default-medium appearance-none focus:outline-none focus:ring-0 focus:border-brand peer"
+                        placeholder="date of birth" />
+                    <label for="dateOfBirth"
+                        class="absolute text-sm text-body duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-neutral-primary px-2 peer-focus:px-2 peer-focus:text-fg-brand peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto start-1">Date
+                        of Birth</label>
+                </div>
+                <div class="flex flex-wrap flex-col md:flex-row justify-center gap-2 items-center p-2">
+                    <h3 class="w-full">Choose Your Gender <i class="fa-solid fa-person-half-dress"></i></h3>
+
+                    <div class="flex  w-full md:w-1/4 items-center p-1 border border-default bg-neutral-primary-soft rounded-base">
+                        <input id="male" type="radio" value="male" name="gender"
+                            class="w-4 h-4 text-neutral-primary border-default-medium bg-neutral-secondary-medium rounded-full checked:border-brand focus:ring-2 focus:outline-none focus:ring-brand-subtle border border-default appearance-none">
+                        <label for="male"
+                            class="w-full p-1 select-none ms-2 text-sm font-medium text-heading">Male</label>
+                    </div>
+                    <div class="flex  w-full md:w-1/4 items-center p-1 border border-default bg-neutral-primary-soft rounded-base">
+                        <input checked id="female" type="radio" value="female" name="gender"
+                            class="w-4 h-4 text-neutral-primary border-default-medium bg-neutral-secondary-medium rounded-full checked:border-brand focus:ring-2 focus:outline-none focus:ring-brand-subtle border border-default appearance-none">
+                        <label for="female"
+                            class="w-full p-1 select-none ms-2 text-sm font-medium text-heading">Female</label>
+                    </div>
+
+
+                </div>
+                <div class="relative my-2">
+                    <input type="text" id="password" formControlName="password"
+                        class="block px-2.5 pb-2.5 pt-4 w-full text-sm text-heading bg-transparent rounded-base border-1 border-default-medium appearance-none focus:outline-none focus:ring-0 focus:border-brand peer"
+                        placeholder="Full Name" />
+                    <label for="password"
+                        class="absolute text-sm text-body duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-neutral-primary px-2 peer-focus:px-2 peer-focus:text-fg-brand peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto start-1">Full-name</label>
+                </div>
+                <div class="relative my-2">
+                    <input type="text" id="rePassword" formControlName="rePassword"
+                        class="block px-2.5 pb-2.5 pt-4 w-full text-sm text-heading bg-transparent rounded-base border-1 border-default-medium appearance-none focus:outline-none focus:ring-0 focus:border-brand peer"
+                        placeholder="Full Name" />
+                    <label for="rePassword"
+                        class="absolute text-sm text-body duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-neutral-primary px-2 peer-focus:px-2 peer-focus:text-fg-brand peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto start-1">Full-name</label>
+                </div>
+
+            </div>
+            <div class="w-3/4 mx-auto my-1">
+                <button class="form-btn">
+                    <i class="fa-solid fa-circle-notch fa-spin-snap-8"></i>
+                    <i class="fa-regular fa-address-card"></i>Register
+                </button>
+            </div>
+
+        </form>
+    </div>
+
+
+</section>

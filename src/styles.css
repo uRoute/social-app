@@ -22,3 +22,7 @@ body{
     background-color: var(--color-secondColor);
     font-family: "default-font";
 }
+
+.form-btn{
+    @apply flex justify-center items-center gap-0.5 bg-mainColor text-lg font-bold text-white p-2 rounded-2xl w-full cursor-pointer hover:bg-indigo-800 duration-200 hover:shadow-2xl
+}
