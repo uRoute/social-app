@@ -39,3 +39,6 @@ body{
 .input-invalid {
   @apply border-emerald-500 border-[0.2rem] dark:border-emerald-500;
 }
+.btn-active{
+    @apply bg-[#e7f3ff] text-mainColor
+}

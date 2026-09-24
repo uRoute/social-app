@@ -10,4 +10,13 @@ import { RouterLink, RouterLinkActive } from '@angular/router';
 })
 export class LeftSideComponent {
   private _PostsService = inject(PostsService)
+  actvieState:string = 'community'
+
+  changeFeed(eventInfo:PointerEvent){
+    let targetElement = eventInfo.target as HTMLElement
+    this.actvieState = targetElement?.innerText.toLowerCase()
+    
+  }
+
+
 }
