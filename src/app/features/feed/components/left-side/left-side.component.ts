@@ -8,17 +8,18 @@ import { RouterLink, RouterLinkActive } from '@angular/router';
   templateUrl: './left-side.component.html',
   styleUrl: './left-side.component.css',
 })
-export class LeftSideComponent implements OnInit{
+export class LeftSideComponent implements OnInit {
   private _PostsService = inject(PostsService)
-  actvieState:string = 'community'
+  actvieState: string = 'community'
 
-  changeFeed(eventInfo:PointerEvent){
+  changeFeed(eventInfo: PointerEvent) {
     let targetElement = eventInfo.target as HTMLElement
-    this.actvieState = targetElement?.innerText.toLowerCase() 
+    this.actvieState = targetElement?.innerText.toLowerCase()
+    this._PostsService.LoadBasedOnTabPost(this.actvieState)
   }
 
   ngOnInit(): void {
-    
+    this._PostsService.LoadBasedOnTabPost(this.actvieState)
   }
 
 }
