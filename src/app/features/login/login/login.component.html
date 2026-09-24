@@ -64,6 +64,9 @@
                 <p class=""> {{resMessage}} </p>
             </div>
             }
+            <div class="text-center text-mainColor my-2">
+                <a class="underline" routerLink="/register"> You Do not have an account ? Register </a>
+            </div>
             <div class="w-3/4 mx-auto my-1">
                 <button [disabled]="loginForm.invalid" class="form-btn">
                     @if(isSpinner){<i class="fa-solid fa-circle-notch fa-spin-snap-8"></i>}

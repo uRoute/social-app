@@ -8,9 +8,10 @@ import {
 } from '@angular/forms';
 import { LoginService } from '../../../core/auth/services/Login/login.service';
 import { RegisterService } from '../../../core/auth/services/Register/register.service';
+import { Router, RouterLink } from '@angular/router';
 @Component({
   selector: 'app-register',
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, RouterLink],
   templateUrl: './register.component.html',
   styleUrl: './register.component.css',
 })
@@ -19,6 +20,7 @@ export class RegisterComponent {
   resMessage: string = '';
   isSpinner: boolean = false;
   private readonly _RegisterService = inject(RegisterService);
+  private readonly _Router = inject(Router);
 
   registerForm: FormGroup = new FormGroup(
     {
@@ -56,16 +58,14 @@ export class RegisterComponent {
     if (this.registerForm.valid) {
       this.isSpinner = true;
       this.resMessage = '';
-      console.log(this.registerForm);
       this._RegisterService.SignUp(this.registerForm.value).subscribe({
         next: (res) => {
-          console.log(res);
           this.resMessage = '';
           this.isSpinner = false;
+          this._Router.navigate(['/login'])
         },
         error: (err) => {
           this.isSpinner = false;
-          console.log(err);
           this.resMessage = err.error.message;
         },
       });

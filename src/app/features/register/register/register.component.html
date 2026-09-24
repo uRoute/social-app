@@ -177,6 +177,10 @@
                 <p class=""> {{resMessage}} </p>
             </div>
             }
+
+            <div class="text-center text-mainColor my-2">
+                <a class="underline" routerLink="/login"> You Already have an account ? Login </a>
+            </div>
             <div class="w-3/4 mx-auto my-1">
                 <button [disabled]="registerForm.invalid" class="form-btn">
                     @if(isSpinner){<i class="fa-solid fa-circle-notch fa-spin-snap-8"></i>}
