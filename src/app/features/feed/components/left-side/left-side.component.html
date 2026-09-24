@@ -1,13 +1,13 @@
-<div class="left-side-nav flex flex-row lg:flex-col flex-wrap p-2 bg-white rounded-md ">
+<div class="left-side-nav flex flex-row lg:flex-col flex-wrap p-2 bg-white rounded-lg  sticky top-0 left-0">
 
     <button (click)="changeFeed($event)" [class.btn-active]="actvieState == 'community'"
-        class="block cursor-pointer px-2 py-1 my-1 bg-rose-200 rounded-xl text-lg font-bold w-1/2 lg:w-full text-start text-gray-600 hover:bg-slate-100 duration-200 ">
+        class="block cursor-pointer px-2 py-1 my-1  rounded-xl text-lg font-bold w-1/2 lg:w-full text-start text-gray-600 hover:bg-slate-100 duration-200 ">
         <i class="fa-solid fa-users-rays"></i>Community</button>
     <button (click)="changeFeed($event)" [class.btn-active]="actvieState == 'feed'"
-        class="block cursor-pointer px-2 py-1 my-1 bg-rose-200 rounded-xl text-lg font-bold w-1/2 lg:w-full text-start text-gray-600 hover:bg-slate-100 duration-200 ">
+        class="block cursor-pointer px-2 py-1 my-1  rounded-xl text-lg font-bold w-1/2 lg:w-full text-start text-gray-600 hover:bg-slate-100 duration-200 ">
         <i class="fa-solid fa-newspaper"></i>Feed</button>
     <button (click)="changeFeed($event)" [class.btn-active]="actvieState == 'saved'"
-        class="block cursor-pointer px-2 py-1 my-1 bg-rose-200 rounded-xl text-lg font-bold w-full text-start text-gray-600 hover:bg-slate-100 duration-200 ">
+        class="block cursor-pointer px-2 py-1 my-1  rounded-xl text-lg font-bold w-full text-start text-gray-600 hover:bg-slate-100 duration-200 ">
         <i class="fa-regular fa-bookmark"></i>Saved</button>
 
 </div>
