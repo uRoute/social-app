@@ -5,28 +5,32 @@
     </div>
 
 
+    @for(postComment of postComments() ; track postComment._id){
     <div class="comments-body w-full rounded-md bg-white mt-3 border-b-2 border-gray-400 my-2">
 
         <div class="comment rounded-md p-1.5 flex items-center justify-between">
 
             <div class="flex gap-2">
                 <div class="comment-user-photo w-10 h-10 rounded-full p-0.5 border-2 border-gray-500">
-                    <img class="w-full h-full rounded-full" src="./Images/default-profile.png" alt="">
+                    <img class="w-full h-full rounded-full" [src]="postComment.commentCreator.photo"
+                        [alt]="postComment.commentCreator.name + 's photo'">
                 </div>
                 <div class="comment-body bg-slate-200 p-3 rounded-lg">
                     <div class="comment-head">
-                        <h4 class="font-bold"> samy </h4>
+                        <h4 class="font-bold"> {{postComment.commentCreator.name}} </h4>
                         <div class="text-gray-500 text-xs">
-                            <span class="mx-0.5">@usef .</span>
-                            <span class="mx-0.5">spt 15 .</span>
-                            <span class="mx-0.5">11:17 PM</span>
+                            <span class="mx-0.5">@{{postComment.commentCreator.username}} .</span>
+                            <span class="mx-0.5">{{postComment.createdAt | date: 'MMM dd'}} .</span>
+                            <span class="mx-0.5">{{postComment.createdAt | date: 'shortTime'}}</span>
                         </div>
                     </div>
                     <div class="comment-info max-w-lg flex flex-col items-center">
-                        <p class="my-1 text-gray-600">Lorem, ipsum dolor.</p>
+                        <p class="my-1 text-gray-600">{{postComment.content}}</p>
+                        @if(postComment.image){
                         <div class="w-32 h-32 rounded-lg">
-                            <img class="w-full h-full rounded-lg" src="./Images/route.png" alt="">
+                            <img class="w-full h-full rounded-lg" [src]="postComment.image" [alt]="postComment.content">
                         </div>
+                        }
                     </div>
                 </div>
             </div>
@@ -38,6 +42,7 @@
         </div>
 
     </div>
-    
+    }
+
 
 </div>
