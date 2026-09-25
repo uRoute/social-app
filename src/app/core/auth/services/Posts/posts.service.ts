@@ -25,8 +25,6 @@ export class PostsService {
       this.GetAllPosts().subscribe({
         next: (res) => {
           this.posts.set(res?.data.posts)
-          // console.log(this.posts());
-
         },
         error: (err) => {
           console.log(err);
@@ -36,8 +34,6 @@ export class PostsService {
       this.GetAllPosts(true).subscribe({
         next: (res) => {
           this.posts.set(res?.data.posts)
-          // console.log(this.posts());
-
         },
         error: (err) => {
           console.log(err);
@@ -48,8 +44,6 @@ export class PostsService {
       this.GetAllPosts().subscribe({
         next: (res) => {
           this.posts.set(res?.data.posts)
-          // console.log(this.posts());
-
         },
         error: (err) => {
           console.log(err);
@@ -61,11 +55,8 @@ export class PostsService {
 
 
   GetAllPosts(following?: boolean): Observable<any> {
-
     return following ? this._HttpClient.get(`${environment.baseURL}/posts/feed?only=following`, this.header)
       : this._HttpClient.get(`${environment.baseURL}/posts`, this.header)
-
-    // return this._HttpClient.get(`${environment.baseURL}/posts` , this.header)
   }
   GetSinglePost(postId: string): Observable<any> {
     return this._HttpClient.get(`${environment.baseURL}/posts/${postId}`, this.header)
