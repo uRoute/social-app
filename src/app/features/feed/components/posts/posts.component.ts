@@ -4,10 +4,11 @@ import { RouterLink, RouterLinkActive } from '@angular/router';
 import { CreatePostComponent } from './Create-post/create-post/create-post.component';
 import { IPost } from '../../../../core/models/Post/ipost.interface';
 import { DatePipe } from '@angular/common';
+import { CommentsComponent } from './Comments/comments/comments.component';
 
 @Component({
   selector: 'app-posts',
-  imports: [RouterLink, RouterLinkActive, CreatePostComponent, DatePipe],
+  imports: [RouterLink, RouterLinkActive, CreatePostComponent, DatePipe , CommentsComponent],
   templateUrl: './posts.component.html',
   styleUrl: './posts.component.css',
 })
