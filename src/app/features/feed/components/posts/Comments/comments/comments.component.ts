@@ -9,8 +9,6 @@ import { DatePipe } from '@angular/common';
   styleUrl: './comments.component.css',
 })
 export class CommentsComponent {
-
-  postComments = input<IComment[]>()
-
-
+  postComments = input<IComment[]>([]);
+  isLoading = input<boolean>(false);
 }

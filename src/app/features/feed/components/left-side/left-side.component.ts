@@ -12,10 +12,9 @@ export class LeftSideComponent implements OnInit {
   private _PostsService = inject(PostsService)
   actvieState: string = 'community'
 
-  changeFeed(eventInfo: PointerEvent) {
-    let targetElement = eventInfo.target as HTMLElement
-    this.actvieState = targetElement?.innerText.toLowerCase()
-    this._PostsService.LoadBasedOnTabPost(this.actvieState)
+  changeFeed(tab: string) {
+    this.actvieState = tab;
+    this._PostsService.LoadBasedOnTabPost(tab);
   }
 
   ngOnInit(): void {

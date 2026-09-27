@@ -1,10 +1,14 @@
 <div class="bg-slate-200 shadow-2xl shadow-gray-300 rounded-xl p-2">
 
     <div class="comments-head w-full rounded-md p-2 bg-white">
-        <h1 class="font-bold">Comments 2</h1>
+        <h1 class="font-bold">Comments {{ postComments().length }}</h1>
     </div>
 
-
+    @if (isLoading()) {
+    <div class="p-4 text-center text-gray-500 text-sm">
+        <i class="fa-solid fa-spinner fa-spin mr-2"></i> Loading comments...
+    </div>
+    } @else {
     @for(postComment of postComments() ; track postComment._id){
     <div class="comments-body w-full rounded-md bg-white mt-3 border-b-2 border-gray-400 my-2">
 
@@ -37,12 +41,16 @@
 
             <div class="flex gap-2 items-center justify-between">
                 <span><i class="fa-regular fa-heart"></i></span>
-                <span>20</span>
+                <span>{{ postComment.likes.length }}</span>
             </div>
         </div>
 
     </div>
+    } @empty {
+    <div class="p-3 text-center text-gray-500 text-sm">
+        No comments yet.
+    </div>
     }
-
+    }
 
 </div>

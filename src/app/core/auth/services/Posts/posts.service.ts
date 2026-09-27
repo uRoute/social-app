@@ -12,51 +12,87 @@ export class PostsService {
   private _HttpClient = inject(HttpClient)
   private _CookieService = inject(CookieService)
 
-  posts: WritableSignal<IPost[]> = signal<IPost[]>([])
+  posts: WritableSignal<IPost[]> = signal<IPost[]>([]);
+  currentPage = signal<number>(1);
+  hasMorePosts = signal<boolean>(true);
+  isLoadingPosts = signal<boolean>(false);
+  activeTab = signal<string>('community');
+  readonly limit = 40;
 
-  header: object = {
-    headers: {
-      AUTHORIZATION: `Bearer ${this._CookieService.get('token')}`,
-    }
+  get header(): object {
+    return {
+      headers: {
+        token: this._CookieService.get('token'),
+        AUTHORIZATION: `Bearer ${this._CookieService.get('token')}`,
+      }
+    };
   }
 
   LoadBasedOnTabPost(tab: string) {
-    if (tab == 'community') {
-      this.GetAllPosts().subscribe({
-        next: (res) => {
-          this.posts.set(res?.data.posts)
-        },
-        error: (err) => {
-          console.log(err);
-        }
-      });
-    } else if (tab == 'feed') {
-      this.GetAllPosts(true).subscribe({
-        next: (res) => {
-          this.posts.set(res?.data.posts)
-        },
-        error: (err) => {
-          console.log(err);
-        }
-      });
-    }
-    else {
-      this.GetAllPosts().subscribe({
-        next: (res) => {
-          this.posts.set(res?.data.posts)
-        },
-        error: (err) => {
-          console.log(err);
-        }
-      });
-    }
+    const cleanTab = tab?.trim().toLowerCase() || 'community';
+    this.activeTab.set(cleanTab);
+    this.currentPage.set(1);
+    this.hasMorePosts.set(true);
+    this.isLoadingPosts.set(true);
 
+    const following = cleanTab === 'feed';
+    this.GetAllPosts(following, 1, this.limit).subscribe({
+      next: (res) => {
+        const fetchedPosts: IPost[] = res?.data?.posts || [];
+        this.posts.set(fetchedPosts);
+        this.isLoadingPosts.set(false);
+
+        const totalPages = res?.meta?.pagination?.numberOfPages ?? res?.paginationInfo?.numberOfPages;
+        if (fetchedPosts.length < this.limit || (totalPages !== undefined && 1 >= totalPages)) {
+          this.hasMorePosts.set(false);
+        }
+      },
+      error: (err) => {
+        console.error('Error fetching initial posts:', err);
+        this.isLoadingPosts.set(false);
+      }
+    });
   }
 
+  loadNextPage(): void {
+    if (this.isLoadingPosts() || !this.hasMorePosts() || this.posts().length === 0) {
+      return;
+    }
 
-  GetAllPosts(following?: boolean): Observable<any> {
-    return following ? this._HttpClient.get(`${environment.baseURL}/posts/feed?only=following`, this.header)
-      : this._HttpClient.get(`${environment.baseURL}/posts`, this.header)
+    this.isLoadingPosts.set(true);
+    const nextPage = this.currentPage() + 1;
+    const following = this.activeTab() === 'feed';
+
+    this.GetAllPosts(following, nextPage, this.limit).subscribe({
+      next: (res) => {
+        const fetchedPosts: IPost[] = res?.data?.posts || [];
+        if (fetchedPosts.length > 0) {
+          const existingIds = new Set(this.posts().map((p) => p._id || p.id));
+          const uniquePosts = fetchedPosts.filter((p) => !existingIds.has(p._id || p.id));
+          if (uniquePosts.length > 0) {
+            this.posts.update((prev) => [...prev, ...uniquePosts]);
+          }
+          this.currentPage.set(nextPage);
+        }
+
+        const totalPages = res?.meta?.pagination?.numberOfPages ?? res?.paginationInfo?.numberOfPages;
+        if (fetchedPosts.length < this.limit || (totalPages !== undefined && nextPage >= totalPages)) {
+          this.hasMorePosts.set(false);
+        }
+        this.isLoadingPosts.set(false);
+      },
+      error: (err) => {
+        console.error('Error loading next page:', err);
+        this.isLoadingPosts.set(false);
+      }
+    });
+  }
+
+  GetAllPosts(following?: boolean, page: number = 1, limit: number = 40): Observable<any> {
+    const endpoint = following
+      ? `${environment.baseURL}/posts/feed?only=following&page=${page}&limit=${limit}`
+      : `${environment.baseURL}/posts?page=${page}&limit=${limit}`;
+    return this._HttpClient.get(endpoint, this.header);
   }
   GetSinglePost(postId: string): Observable<any> {
     return this._HttpClient.get(`${environment.baseURL}/posts/${postId}`, this.header)

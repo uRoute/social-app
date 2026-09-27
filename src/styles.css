@@ -5,12 +5,12 @@
 @source "../node_modules/flowbite";
 
 @utility container {
-    margin-inline:auto;
+    margin-inline: auto;
 }
 
-@theme{
-    --color-mainColor:#00298D;
-    --color-secondColor:#F0F2F5;
+@theme {
+    --color-mainColor: #00298D;
+    --color-secondColor: #F0F2F5;
 }
 
 @font-face {
@@ -18,10 +18,11 @@
     src: url(./../public/Fonts/Fira_Sans/FiraSans-Regular.ttf);
 }
 
-body{
+body {
     background-color: var(--color-secondColor);
     font-family: "default-font";
 }
+
 .main-text-colors {
     background: linear-gradient(90deg, #D9228A, #F33F36, #4285E8);
     -webkit-background-clip: text;
@@ -30,15 +31,18 @@ body{
     color: transparent;
 }
 
-.form-btn{
-    @apply flex justify-center items-center gap-0.5 enabled:bg-mainColor text-lg font-bold text-white p-2 rounded-2xl w-full enabled:cursor-pointer enabled:hover:bg-indigo-800 duration-200 enabled:hover:shadow-2xl disabled:bg-gray-600 disabled:cursor-no-drop disabled:shadow-none  ;
+.form-btn {
+    @apply flex justify-center items-center gap-0.5 enabled:bg-mainColor text-lg font-bold text-white p-2 rounded-2xl w-full enabled:cursor-pointer enabled:hover:bg-indigo-800 duration-200 enabled:hover:shadow-2xl disabled:bg-gray-600 disabled:cursor-no-drop disabled:shadow-none;
 }
+
 .input-valid {
-  @apply border-rose-500 border-[0.2rem] dark:border-rose-500;
+    @apply border-rose-500 border-[0.2rem] dark:border-rose-500;
 }
+
 .input-invalid {
-  @apply border-emerald-500 border-[0.2rem] dark:border-emerald-500;
+    @apply border-emerald-500 border-[0.2rem] dark:border-emerald-500;
 }
-.btn-active{
+
+.btn-active {
     @apply bg-[#e7f3ff] text-mainColor
 }

@@ -4,7 +4,7 @@
         <app-create-post></app-create-post>
     </div>
 
-    @for(post of posts() ; track $index){
+    @for(post of posts() ; track (post._id || post.id || $index)){
     <div class="posts bg-white p-2 rounded-xl my-2">
 
         <div class="post-head flex p-1 items-center justify-between">
@@ -83,7 +83,10 @@
 
         @if (isCommentsOpen(post._id || post.id)) {
         <div class="mt-2">
-            <app-comments [postComments]="postComments()"></app-comments>
+            <app-comments 
+                [postComments]="getPostComments(post._id || post.id)"
+                [isLoading]="isCommentsLoading(post._id || post.id)">
+            </app-comments>
         </div>
         }
 
@@ -95,10 +98,20 @@
     </div>
     }
 
+    <!-- Sentinel element for infinite scroll detection -->
+    <div #sentinel class="h-4 w-full"></div>
 
+    @if (isLoadingPosts()) {
+    <div class="flex justify-center items-center py-4 my-2 bg-white rounded-xl shadow-sm text-blue-600 gap-2">
+        <i class="fa-solid fa-circle-notch fa-spin text-xl"></i>
+        <span class="text-sm font-semibold text-gray-700">Loading more posts...</span>
+    </div>
+    }
 
-
-
-
+    @if (!hasMorePosts() && posts().length > 0) {
+    <div class="text-center py-6 text-gray-500 text-sm font-medium">
+        <p>You've caught up with all posts 🎉</p>
+    </div>
+    }
 
 </div>
