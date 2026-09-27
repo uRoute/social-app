@@ -35,10 +35,9 @@ export class PostsService {
     this.hasMorePosts.set(true);
     this.isLoadingPosts.set(true);
 
-    const following = cleanTab === 'feed';
-    this.GetAllPosts(following, 1, this.limit).subscribe({
+    this.GetPostsByTab(cleanTab, 1, this.limit).subscribe({
       next: (res) => {
-        const fetchedPosts: IPost[] = res?.data?.posts || [];
+        const fetchedPosts: IPost[] = res?.data?.posts || res?.data?.bookmarks || [];
         this.posts.set(fetchedPosts);
         this.isLoadingPosts.set(false);
 
@@ -48,7 +47,7 @@ export class PostsService {
         }
       },
       error: (err) => {
-        console.error('Error fetching initial posts:', err);
+        console.error('Error fetching initial posts for tab', cleanTab, err);
         this.isLoadingPosts.set(false);
       }
     });
@@ -61,11 +60,11 @@ export class PostsService {
 
     this.isLoadingPosts.set(true);
     const nextPage = this.currentPage() + 1;
-    const following = this.activeTab() === 'feed';
+    const currentTab = this.activeTab();
 
-    this.GetAllPosts(following, nextPage, this.limit).subscribe({
+    this.GetPostsByTab(currentTab, nextPage, this.limit).subscribe({
       next: (res) => {
-        const fetchedPosts: IPost[] = res?.data?.posts || [];
+        const fetchedPosts: IPost[] = res?.data?.posts || res?.data?.bookmarks || [];
         if (fetchedPosts.length > 0) {
           const existingIds = new Set(this.posts().map((p) => p._id || p.id));
           const uniquePosts = fetchedPosts.filter((p) => !existingIds.has(p._id || p.id));
@@ -82,17 +81,37 @@ export class PostsService {
         this.isLoadingPosts.set(false);
       },
       error: (err) => {
-        console.error('Error loading next page:', err);
+        console.error('Error loading next page for tab', currentTab, err);
         this.isLoadingPosts.set(false);
       }
     });
   }
 
+  GetPostsByTab(tab: string, page: number = 1, limit: number = 40): Observable<any> {
+    if (tab === 'feed') {
+      return this._HttpClient.get(
+        `${environment.baseURL}/posts/feed?only=following&page=${page}&limit=${limit}`,
+        this.header
+      );
+    }
+    if (tab === 'saved') {
+      return this._HttpClient.get(
+        `${environment.baseURL}/users/bookmarks?page=${page}&limit=${limit}`,
+        this.header
+      );
+    }
+    return this._HttpClient.get(
+      `${environment.baseURL}/posts?page=${page}&limit=${limit}`,
+      this.header
+    );
+  }
+
   GetAllPosts(following?: boolean, page: number = 1, limit: number = 40): Observable<any> {
-    const endpoint = following
-      ? `${environment.baseURL}/posts/feed?only=following&page=${page}&limit=${limit}`
-      : `${environment.baseURL}/posts?page=${page}&limit=${limit}`;
-    return this._HttpClient.get(endpoint, this.header);
+    return this.GetPostsByTab(following ? 'feed' : 'community', page, limit);
+  }
+
+  GetSavedPosts(page: number = 1, limit: number = 40): Observable<any> {
+    return this.GetPostsByTab('saved', page, limit);
   }
   GetSinglePost(postId: string): Observable<any> {
     return this._HttpClient.get(`${environment.baseURL}/posts/${postId}`, this.header)
