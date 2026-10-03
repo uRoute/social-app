@@ -13,20 +13,33 @@ export class UserService {
   private _HttpClient = inject(HttpClient)
   private _CookieService = inject(CookieService)
   private _Router = inject(Router)
-  header: object = {
-    headers: {
-      AUTHORIZATION: `Bearer ${this._CookieService.get('token')}`,
-    }
-  }
 
-  LogOut(){
+
+  LogOut() {
     this._CookieService.delete('token');
     this._Router.navigate(['/login'])
   }
 
 
-  GetFollowSuggestions():Observable<any>{
-    return this._HttpClient.get(`${environment.baseURL}/users/suggestions?limit=10` , this.header)
+  GetFollowSuggestions(): Observable<any> {
+    return this._HttpClient.get(`${environment.baseURL}/users/suggestions?limit=10`)
   }
+
+  GetMyProfile(): Observable<any> {
+    return this._HttpClient.get(`${environment.baseURL}/users/profile-data`)
+  }
+
+  UpdateProfileImage(img: FormData): Observable<any> {
+    return this._HttpClient.put(`${environment.baseURL}/users/upload-photo`, img)
+  }
+
+  GetBookmarks(): Observable<any> {
+    return this._HttpClient.get(`${environment.baseURL}/users/bookmarks`)
+  }
+
+  FollowOrUnFollowUser(userId: string): Observable<any> {
+    return this._HttpClient.post(`${environment.baseURL}/users/${userId}/follow`, {})
+  }
+
 
 }

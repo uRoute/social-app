@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, signal, WritableSignal } from '@angular/core';
 import { PostsService } from '../../../../core/auth/services/Posts/posts.service';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { UserService } from '../../../../shared/services/User/user.service';
@@ -14,13 +14,12 @@ export class RightSideComponent {
   private _PostsService = inject(PostsService)
   private _UserService = inject(UserService)
 
-  suggestedFriends!:ISuggest[]
+  suggestedFriends:WritableSignal<ISuggest[]> = signal([])
 
   ngOnInit(){
     this._UserService.GetFollowSuggestions().subscribe({
       next:(res)=>{
-        this.suggestedFriends = res.data.suggestions
-        console.log(this.suggestedFriends);
+        this.suggestedFriends.set(res.data.suggestions)
       },
       error:(err)=>{
         console.log(err);

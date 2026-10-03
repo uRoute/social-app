@@ -35,11 +35,11 @@ body {
     @apply flex justify-center items-center gap-0.5 enabled:bg-mainColor text-lg font-bold text-white p-2 rounded-2xl w-full enabled:cursor-pointer enabled:hover:bg-indigo-800 duration-200 enabled:hover:shadow-2xl disabled:bg-gray-600 disabled:cursor-no-drop disabled:shadow-none;
 }
 
-.input-valid {
+.input-invalid {
     @apply border-rose-500 border-[0.2rem] dark:border-rose-500;
 }
 
-.input-invalid {
+.input-valid {
     @apply border-emerald-500 border-[0.2rem] dark:border-emerald-500;
 }
 

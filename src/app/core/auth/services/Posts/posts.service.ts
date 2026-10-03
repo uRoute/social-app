@@ -1,6 +1,5 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable, signal, WritableSignal } from '@angular/core';
-import { CookieService } from 'ngx-cookie-service';
 import { Observable } from 'rxjs';
 import { environment } from '../../../../../environments/environment.development';
 import { IPost } from '../../../models/Post/ipost.interface';
@@ -10,8 +9,6 @@ import { IPost } from '../../../models/Post/ipost.interface';
 })
 export class PostsService {
   private _HttpClient = inject(HttpClient)
-  private _CookieService = inject(CookieService)
-
   posts: WritableSignal<IPost[]> = signal<IPost[]>([]);
   currentPage = signal<number>(1);
   hasMorePosts = signal<boolean>(true);
@@ -19,14 +16,6 @@ export class PostsService {
   activeTab = signal<string>('community');
   readonly limit = 40;
 
-  get header(): object {
-    return {
-      headers: {
-        token: this._CookieService.get('token'),
-        AUTHORIZATION: `Bearer ${this._CookieService.get('token')}`,
-      }
-    };
-  }
 
   LoadBasedOnTabPost(tab: string) {
     const cleanTab = tab?.trim().toLowerCase() || 'community';
@@ -90,19 +79,16 @@ export class PostsService {
   GetPostsByTab(tab: string, page: number = 1, limit: number = 40): Observable<any> {
     if (tab === 'feed') {
       return this._HttpClient.get(
-        `${environment.baseURL}/posts/feed?only=following&page=${page}&limit=${limit}`,
-        this.header
+        `${environment.baseURL}/posts/feed?only=following&page=${page}&limit=${limit}`
       );
     }
     if (tab === 'saved') {
       return this._HttpClient.get(
-        `${environment.baseURL}/users/bookmarks?page=${page}&limit=${limit}`,
-        this.header
+        `${environment.baseURL}/users/bookmarks?page=${page}&limit=${limit}`
       );
     }
     return this._HttpClient.get(
-      `${environment.baseURL}/posts?page=${page}&limit=${limit}`,
-      this.header
+      `${environment.baseURL}/posts?page=${page}&limit=${limit}`
     );
   }
 
@@ -114,27 +100,27 @@ export class PostsService {
     return this.GetPostsByTab('saved', page, limit);
   }
   GetSinglePost(postId: string): Observable<any> {
-    return this._HttpClient.get(`${environment.baseURL}/posts/${postId}`, this.header)
+    return this._HttpClient.get(`${environment.baseURL}/posts/${postId}`)
   }
   GetPostLikes(postId: string): Observable<any> {
-    return this._HttpClient.get(`${environment.baseURL}/posts/${postId}`, this.header)
+    return this._HttpClient.get(`${environment.baseURL}/posts/${postId}`)
   }
   LikePost(postId: string): Observable<any> {
-    return this._HttpClient.put(`${environment.baseURL}/posts/${postId}/like`, '', this.header)
+    return this._HttpClient.put(`${environment.baseURL}/posts/${postId}/like`, '')
   }
   SharePost(postId: string): Observable<any> {
-    return this._HttpClient.post(`${environment.baseURL}/posts/${postId}/share`, '', this.header)
+    return this._HttpClient.post(`${environment.baseURL}/posts/${postId}/share`, '')
   }
   CreatePost(postData: object): Observable<any> {
-    return this._HttpClient.post(`${environment.baseURL}/posts`, postData, this.header)
+    return this._HttpClient.post(`${environment.baseURL}/posts`, postData)
   }
   UpdatePost(postId: string): Observable<any> {
-    return this._HttpClient.put(`${environment.baseURL}/posts/${postId}`, this.header)
+    return this._HttpClient.put(`${environment.baseURL}/posts/${postId}`, '')
   }
   DeletePost(postId: string): Observable<any> {
-    return this._HttpClient.delete(`${environment.baseURL}/posts/${postId}`, this.header)
+    return this._HttpClient.delete(`${environment.baseURL}/posts/${postId}`)
   }
   BookmarkPosts(postId: string): Observable<any> {
-    return this._HttpClient.put(`${environment.baseURL}/posts/${postId}/bookmark`, '', this.header)
+    return this._HttpClient.put(`${environment.baseURL}/posts/${postId}/bookmark`, '')
   }
 }
