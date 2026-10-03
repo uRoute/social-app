@@ -6,13 +6,13 @@
     <div>
         <form [formGroup]="loginForm" (ngSubmit)="login()">
             <div class="text-gray-600">
-                
+
                 <div class="my-2">
                     @let userEmail = loginForm.get('email');
                     <label for="email" class="block mb-2.5 text-sm font-medium text-heading">Email</label>
                     <input [class]="{
-                        'input-valid' : userEmail?.errors && userEmail?.touched,
-                        'input-invalid' : !userEmail?.errors && userEmail?.touched
+                        'input-valid' : !userEmail?.errors && userEmail?.touched,
+                        'input-invalid' : userEmail?.errors && userEmail?.touched
                     }" type="email" id="email" formControlName="email"
                         class="bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-base focus:ring-brand focus:border-brand block w-full px-3 py-2.5 shadow-xs placeholder:text-body"
                         placeholder="email.com" />
@@ -30,14 +30,14 @@
                     </div>
                     }
                 </div>
-              
-              
+
+
                 <div class="my-2">
                     @let userPassword = loginForm.get('password');
                     <label for="password" class="block mb-2.5 text-sm font-medium text-heading">Password</label>
                     <input [class]="{
-                    'input-valid' : userPassword?.errors && userPassword?.touched,
-                    'input-invalid' : !userPassword?.errors && userPassword?.touched
+                    'input-valid' : !userPassword?.errors && userPassword?.touched,
+                    'input-invalid' : userPassword?.errors && userPassword?.touched
                 }" autocomplete="off" type="password" id="password" formControlName="password"
                         class="bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-base focus:ring-brand focus:border-brand block w-full px-3 py-2.5 shadow-xs placeholder:text-body"
                         placeholder="pass***" required />
@@ -57,7 +57,7 @@
                     </div>
                     }
                 </div>
-                
+
             </div>
             @if(resMessage){
             <div class="bg-rose-300 w-1/2 mx-auto text-center p-3 text-2xl font-bold text-white rounded-xl">

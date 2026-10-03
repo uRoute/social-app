@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, signal, WritableSignal } from '@angular/core';
 import {
   AbstractControl,
   FormControl,
@@ -17,7 +17,7 @@ import { Router, RouterLink } from '@angular/router';
 })
 export class RegisterComponent {
   spChars: string = '_';
-  resMessage: string = '';
+  resMessage: WritableSignal<string> = signal('');
   isSpinner: boolean = false;
   private readonly _RegisterService = inject(RegisterService);
   private readonly _Router = inject(Router);
@@ -57,16 +57,16 @@ export class RegisterComponent {
   submitRegisterForm() {
     if (this.registerForm.valid) {
       this.isSpinner = true;
-      this.resMessage = '';
+      this.resMessage.set('');
       this._RegisterService.SignUp(this.registerForm.value).subscribe({
         next: (res) => {
-          this.resMessage = '';
+          this.resMessage.set('');
           this.isSpinner = false;
           this._Router.navigate(['/login'])
         },
         error: (err) => {
           this.isSpinner = false;
-          this.resMessage = err.error.message;
+          this.resMessage.set(err.error.message);
         },
       });
     } else {

@@ -8,9 +8,18 @@
     margin-inline: auto;
 }
 
+@utility text-main-color {
+    background: var(--color-prefered-color);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    color: transparent;
+}
+
 @theme {
     --color-mainColor: #00298D;
     --color-secondColor: #F0F2F5;
+    --color-prefered-color: linear-gradient(90deg, #D9228A, #F33F36, #4285E8);
 }
 
 @font-face {
@@ -44,5 +53,5 @@ body {
 }
 
 .btn-active {
-    @apply bg-[#e7f3ff] text-mainColor
+    @apply bg-[#e7f3ff] text-main-color
 }

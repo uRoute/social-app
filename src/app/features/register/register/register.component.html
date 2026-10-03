@@ -13,8 +13,8 @@
                     @let name = registerForm.get('name');
                     <label for="name" class="block mb-2.5 text-sm font-medium text-heading">Full Name</label>
                     <input [class]="{
-                        'input-valid' : name?.errors && name?.touched,
-                        'input-invalid' : !name?.errors && name?.touched
+                        'input-valid' : !name?.errors && name?.touched,
+                        'input-invalid' : name?.errors && name?.touched
                     } " type="text" id="name" formControlName="name"
                         class="bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-base focus:ring-brand focus:border-brand block w-full px-3 py-2.5 shadow-xs placeholder:text-body"
                         placeholder=" Full name " />
@@ -38,8 +38,8 @@
                     @let userName = registerForm.get('username');
                     <label for="username" class="block mb-2.5 text-sm font-medium text-heading">User Name</label>
                     <input [class]="{
-                        'input-valid' : userName?.errors && userName?.touched,
-                        'input-invalid' : !userName?.errors && userName?.touched
+                        'input-valid' : !userName?.errors && userName?.touched,
+                        'input-invalid' : userName?.errors && userName?.touched
                     }" type="text" id="username" formControlName="username"
                         class="bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-base focus:ring-brand focus:border-brand block w-full px-3 py-2.5 shadow-xs placeholder:text-body"
                         placeholder="@User_Name (optional)" />
@@ -63,8 +63,8 @@
                     @let userEmail = registerForm.get('email');
                     <label for="email" class="block mb-2.5 text-sm font-medium text-heading">Email</label>
                     <input [class]="{
-                        'input-valid' : userEmail?.errors && userEmail?.touched,
-                        'input-invalid' : !userEmail?.errors && userEmail?.touched
+                        'input-valid' : !userEmail?.errors && userEmail?.touched,
+                        'input-invalid' : userEmail?.errors && userEmail?.touched
                     }" type="email" id="email" formControlName="email"
                         class="bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-base focus:ring-brand focus:border-brand block w-full px-3 py-2.5 shadow-xs placeholder:text-body"
                         placeholder="email.com" />
@@ -103,8 +103,8 @@
                     @let userDate = registerForm.get('dateOfBirth');
                     <label for="dateOfBirth" class="block mb-2.5 text-sm font-medium text-heading">Date of birth</label>
                     <input [class]="{
-                    'input-valid' : userDate?.errors && userDate?.touched,
-                    'input-invalid' : !userDate?.errors && userDate?.touched
+                    'input-valid' : !userDate?.errors && userDate?.touched,
+                    'input-invalid' : userDate?.errors && userDate?.touched
                 }" type="date" id="dateOfBirth" formControlName="dateOfBirth"
                         class="bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-base focus:ring-brand focus:border-brand block w-full px-3 py-2.5 shadow-xs placeholder:text-body"
                         placeholder="Date of Birth" />
@@ -124,8 +124,8 @@
                     @let userPassword = registerForm.get('password');
                     <label for="password" class="block mb-2.5 text-sm font-medium text-heading">Password</label>
                     <input [class]="{
-                    'input-valid' : userPassword?.errors && userPassword?.touched,
-                    'input-invalid' : !userPassword?.errors && userPassword?.touched
+                    'input-valid' : !userPassword?.errors && userPassword?.touched,
+                    'input-invalid' : userPassword?.errors && userPassword?.touched
                 }" autocomplete="off" type="password" id="password" formControlName="password"
                         class="bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-base focus:ring-brand focus:border-brand block w-full px-3 py-2.5 shadow-xs placeholder:text-body"
                         placeholder="pass***" required />
@@ -150,8 +150,8 @@
                     <label for="rePassword" class="block mb-2.5 text-sm font-medium text-heading">Confirm
                         password</label>
                     <input [class]="{
-                    'input-valid' : (registerForm.errors || userRePassword?.errors) && userRePassword?.touched,
-                    'input-invalid' : !(registerForm.errors || userRePassword?.errors) && userRePassword?.touched
+                    'input-valid' : !(registerForm.errors || userRePassword?.errors) && userRePassword?.touched,
+                    'input-invalid' : (registerForm.errors || userRePassword?.errors) && userRePassword?.touched
                 }" autocomplete="off" type="password" id="rePassword" formControlName="rePassword"
                         class="bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-base focus:ring-brand focus:border-brand block w-full px-3 py-2.5 shadow-xs placeholder:text-body"
                         placeholder="pass***" required />
@@ -172,9 +172,9 @@
                     }
                 </div>
             </div>
-            @if(resMessage){
+            @if(resMessage()){
             <div class="bg-rose-300 w-1/2 mx-auto text-center p-3 text-2xl font-bold text-white rounded-xl">
-                <p class=""> {{resMessage}} </p>
+                <p class=""> {{resMessage()}} </p>
             </div>
             }
 

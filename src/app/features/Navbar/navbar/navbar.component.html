@@ -4,6 +4,7 @@
       <img src="./Images/logo-resize-2.png" class="h-12" alt="Social app Logo" />
       <span class="self-center text-xl main-text-colors font-semibold whitespace-nowrap">Social-App</span>
     </a>
+    @if(isLogged()){
     <div class="flex items-center md:order-2 space-x-3 md:space-x-0 rtl:space-x-reverse">
       <button type="button"
         class="flex text-sm bg-neutral-primary rounded-full md:me-0 focus:ring-4 focus:ring-neutral-tertiary"
@@ -20,13 +21,14 @@
           <span class="block text-body truncate">name@flowbite.com</span>
         </div> -->
         <ul class="p-2 text-sm text-body font-medium" aria-labelledby="user-menu-button">
-          
+
           <li>
             <a routerLink="/settings"
               class="inline-flex items-center w-full p-2 hover:bg-neutral-tertiary-medium hover:text-heading rounded">Settings</a>
           </li>
           <li>
-            <a (click)="signOut()" class="inline-flex items-center w-full p-2 hover:bg-neutral-tertiary-medium hover:text-heading rounded">Sign
+            <a (click)="signOut()"
+              class="inline-flex items-center w-full p-2 hover:bg-neutral-tertiary-medium hover:text-heading rounded">Sign
               out</a>
           </li>
         </ul>
@@ -46,19 +48,19 @@
         class="font-medium shadow-2xs bg-secondColor gap-2 text-gray-600 flex flex-col p-1 my-1 md:m-0 border-2 border-gray-200 rounded-base md:flex-row  rtl:space-x-reverse">
 
 
-        <li routerLinkActive="text-mainColor bg-gray-50" routerLink="/feeds"
+        <li routerLinkActive="btn-active bg-gray-50" routerLink="/feeds"
           class="cursor-pointer p-2 rounded-2xl  hover:bg-gray-50 hover:text-mainColor duration-300 flex justify-center items-center md:justify-between md:items-center">
           <i class="fa-solid fa-house-user"></i>
           <a class="">Feeds</a>
         </li>
 
-        <li routerLinkActive="text-mainColor bg-gray-50" routerLink="/profile"
+        <li routerLinkActive="btn-active bg-gray-50" routerLink="/profile"
           class="cursor-pointer p-2 rounded-2xl  hover:bg-gray-50 hover:text-mainColor duration-300 flex justify-center items-center md:justify-between md:items-center">
           <i class="fa-solid fa-circle-user"></i>
           <a class="">Profile</a>
         </li>
 
-        <li routerLinkActive="text-mainColor bg-gray-50" routerLink="/notifications"
+        <li routerLinkActive="btn-active bg-gray-50" routerLink="/notifications"
           class="cursor-pointer p-2 rounded-2xl  hover:bg-gray-50 hover:text-mainColor duration-300 flex justify-center items-center md:justify-between md:items-center">
           <i class="fa-solid fa-bell"></i>
           <a class="">Notifications</a>
@@ -67,5 +69,8 @@
 
       </ul>
     </div>
+    }@else {
+
+    }
   </div>
 </nav>
