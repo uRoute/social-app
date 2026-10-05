@@ -3,11 +3,11 @@
     <div class="p-2 rounded-lg bg-white">
 
         <div class="my-1">
-            <h3 class="font-medium text-gray-600"><i class="fa-solid fa-user-group"></i> Suggested Friends</h3>
+            <h3 class="font-medium text-gray-700"><i class="fa-solid fa-user-group"></i> Suggested Friends</h3>
             <div class="suggested-search my-2">
                 <label class="hidden" for="suggestedSeacrh">Search</label>
                 <input
-                    class="bg-sky-50 focus:bg-transparent py-1 px-2 rounded-xl block w-full border-none outline-none focus:outline-0 focus:border-none focus:border-transparent"
+                    class="bg-sky-50 focus:bg-transparent py-1 px-2 rounded-xl block w-full border-none outline-none focus:outline-0 focus:border-none focus:border-transparent text-gray-900 placeholder:text-gray-500"
                     placeholder="Search by name ...." type="text" name="suggestedSeacrh" id="suggestedSeacrh">
             </div>
         </div>
@@ -25,7 +25,7 @@
                                 [alt]="suggest.username+'s photo'">
                         </div>
                         <div class="friend-name">
-                            <h2 class="text-sm font-bold"> {{suggest.name}} </h2>
+                            <h2 class="text-sm font-bold text-gray-900"> {{suggest.name}} </h2>
                             <h6 class="text-xs text-gray-500"> {{suggest.username}} </h6>
                         </div>
 

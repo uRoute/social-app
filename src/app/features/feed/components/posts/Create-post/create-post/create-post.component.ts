@@ -1,6 +1,7 @@
-import { Component, inject, OnInit, signal, WritableSignal } from '@angular/core';
+import { Component, computed, inject, OnInit, output, signal, WritableSignal } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { PostsService } from '../../../../../../core/auth/services/Posts/posts.service';
+import { UserService } from '../../../../../../shared/services/User/user.service';
 
 @Component({
   selector: 'app-create-post',
@@ -10,10 +11,14 @@ import { PostsService } from '../../../../../../core/auth/services/Posts/posts.s
 })
 export class CreatePostComponent implements OnInit {
   private _PostsService = inject(PostsService)
+  private _UserService = inject(UserService)
+  postCreated = output<void>();
   postContent: FormControl = new FormControl('');
   postPrivacy: FormControl = new FormControl('public');
   imageFile: File | null = null;
   imgURL: WritableSignal<string | ArrayBuffer | null | undefined> = signal<string | ArrayBuffer | null | undefined>(null);
+  // user data
+  currentUserData = computed(() => this._UserService.userInfo());
 
   isLoading: WritableSignal<boolean> = signal<boolean>(false);
 
@@ -71,6 +76,7 @@ export class CreatePostComponent implements OnInit {
         this.postPrivacy.reset('public');
         this.isLoading.set(false);
         this._PostsService.LoadBasedOnTabPost(this._PostsService.activeTab());
+        this.postCreated.emit();
       },
       error: (err) => {
         console.log(err);

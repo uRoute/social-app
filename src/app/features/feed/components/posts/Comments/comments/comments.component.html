@@ -1,7 +1,7 @@
 <div class="bg-slate-200 shadow-2xl shadow-gray-300 rounded-xl p-2">
 
     <div class="comments-head w-full rounded-md p-2 bg-white">
-        <h1 class="font-bold">Comments {{ postComments().length }}</h1>
+        <h1 class="font-bold text-gray-900">Comments {{ postComments().length }}</h1>
     </div>
 
     @if (isLoading()) {
@@ -21,7 +21,7 @@
                 </div>
                 <div class="comment-body bg-slate-200 p-3 rounded-lg">
                     <div class="comment-head">
-                        <h4 class="font-bold"> {{postComment.commentCreator.name}} </h4>
+                        <h4 class="font-bold text-gray-900"> {{postComment.commentCreator.name}} </h4>
                         <div class="text-gray-500 text-xs">
                             <span class="mx-0.5">@{{postComment.commentCreator.username}} .</span>
                             <span class="mx-0.5">{{postComment.createdAt | date: 'MMM dd'}} .</span>
@@ -29,7 +29,7 @@
                         </div>
                     </div>
                     <div class="comment-info max-w-lg flex flex-col items-center">
-                        <p class="my-1 text-gray-600">{{postComment.content}}</p>
+                        <p class="my-1 text-gray-800">{{postComment.content}}</p>
                         @if(postComment.image){
                         <div class="w-32 h-32 rounded-lg">
                             <img class="w-full h-full rounded-lg" [src]="postComment.image" [alt]="postComment.content">
@@ -39,9 +39,9 @@
                 </div>
             </div>
 
-            <div class="flex gap-2 items-center justify-between">
+            <div class="flex gap-2 items-center justify-between text-gray-700">
                 <span><i class="fa-regular fa-heart"></i></span>
-                <span>{{ postComment.likes.length }}</span>
+                <span class="font-semibold">{{ postComment.likes.length }}</span>
             </div>
         </div>
 
@@ -52,5 +52,59 @@
     </div>
     }
     }
+    <div class="create-comment p-3 rounded-lg mt-3 bg-white">
+        <form #commentForm (submit)="createNewComment($event, commentForm)">
+            <div class="head flex items-center gap-1.5">
+                <div class="user-photo w-10 h-10 p-0.5 rounded-full border-2 border-gray-400">
+                    <img class="w-full h-full rounded-full" [src]="currentUserData?.photo"
+                        [alt]="currentUserData?.name">
+                </div>
+                <div class="user-name my-1">
+                    <h2 class="font-bold text-sm text-gray-900">{{currentUserData?.name}}</h2>
+                </div>
+            </div>
+
+            <div class="body">
+                <div class="mt-3">
+                    <textarea [formControl]="commentContent" name="comment-content"
+                        class="w-full border-gray-200 rounded-lg bg-slate-100 text-md p-2 text-gray-900 placeholder:text-gray-500 focus:outline-none focus:ring-1 focus:ring-indigo"
+                        placeholder="Write a comment..."></textarea>
+                </div>
+                <hr class="my-2" />
+                @if(imgURL()){
+                <div class="h-[25vh] my-3 rounded-lg overflow-hidden relative group">
+                    <img class="w-full h-full object-cover rounded-lg" [src]="imgURL()" alt="Comment image preview">
+                    <button type="button" (click)="removeImg()"
+                        class="absolute top-1 right-1 bg-white p-2 rounded-full cursor-pointer hidden group-hover:flex items-center justify-center shadow">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </div>
+                }
+
+                <div class="post-actions flex justify-between items-center mt-1">
+                    <div class="flex items-center gap-2">
+                        <label [attr.for]="'comment-file-' + (postId() || 'default')"
+                            class="text-indigo flex items-center gap-1 cursor-pointer duration-150 hover:bg-[#e7f3ff] p-1.5 rounded-md text-sm font-medium">
+                            <i class="fa-solid fa-image text-xl"></i>Photo
+                        </label>
+                        <input (change)="handleCommentImage($event)" [id]="'comment-file-' + (postId() || 'default')"
+                            class="hidden" type="file" accept="image/*">
+                    </div>
+
+                    <div>
+                        <button type="submit" [disabled]="isSubmitting()"
+                            class="py-1 px-4 bg-indigo text-white rounded-full hover:bg-indigo-800 cursor-pointer duration-150 disabled:opacity-50 disabled:cursor-not-allowed">
+                            @if (isSubmitting()) {
+                            <i class="fa-solid fa-spinner fa-spin"></i>
+                            } @else {
+                            Comment
+                            <i class="fa-solid fa-paper-plane ml-1"></i>
+                            }
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
 
 </div>

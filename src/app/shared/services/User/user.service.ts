@@ -1,9 +1,11 @@
 import { HttpClient } from '@angular/common/http';
-import { inject, Injectable } from '@angular/core';
+import { inject, Injectable, signal, WritableSignal } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from '../../../../environments/environment.development';
 import { CookieService } from 'ngx-cookie-service';
 import { Router } from '@angular/router';
+import { ILogged } from '../../../core/models/LoggedUser/ilogged.interface';
+import { jwtDecode } from "jwt-decode";
 
 @Injectable({
   providedIn: 'root',
@@ -13,11 +15,24 @@ export class UserService {
   private _HttpClient = inject(HttpClient)
   private _CookieService = inject(CookieService)
   private _Router = inject(Router)
+  userInfo: WritableSignal<ILogged | null> = signal<ILogged | null>(null);
+
+  constructor() {
+    const savedUser = this._CookieService.get('userInfo');
+    if (savedUser) {
+      try {
+        this.userInfo.set(JSON.parse(savedUser));
+      } catch (e) {
+        console.error('Failed to parse userInfo cookie', e);
+      }
+    }
+  }
 
 
   LogOut() {
     this._CookieService.delete('token');
-    this._Router.navigate(['/login'])
+    this._Router.navigate(['/login']);
+    this.userInfo.set(null);
   }
 
 
@@ -39,6 +54,10 @@ export class UserService {
 
   FollowOrUnFollowUser(userId: string): Observable<any> {
     return this._HttpClient.post(`${environment.baseURL}/users/${userId}/follow`, {})
+  }
+
+  GetUserPosts(userId: string): Observable<any> {
+    return this._HttpClient.get(`${environment.baseURL}/users/${userId}/posts`)
   }
 
 

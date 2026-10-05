@@ -20,6 +20,7 @@ import { DatePipe } from '@angular/common';
 import { CommentsComponent } from './Comments/comments/comments.component';
 import { CommentsService } from '../../../../shared/services/comments.service';
 import { IComment } from '../../../../core/models/Comment/icomment.interface';
+import { UserService } from '../../../../shared/services/User/user.service';
 
 @Component({
   selector: 'app-posts',
@@ -30,6 +31,7 @@ import { IComment } from '../../../../core/models/Comment/icomment.interface';
 export class PostsComponent implements OnInit, AfterViewChecked, AfterViewInit, OnDestroy {
   readonly postsService = inject(PostsService);
   private _CommentsService = inject(CommentsService);
+  private _UserService = inject(UserService);
 
   @ViewChild('sentinel') sentinel?: ElementRef<HTMLElement>;
   private observer?: IntersectionObserver;
@@ -112,6 +114,20 @@ export class PostsComponent implements OnInit, AfterViewChecked, AfterViewInit, 
     });
   }
 
+  onCommentCreated(postId: string): void {
+    this._CommentsService.GetPostComments(postId).subscribe({
+      next: (res) => {
+        this.postCommentsMap.update((map) => ({
+          ...map,
+          [postId]: res.data.comments,
+        }));
+      },
+      error: (err) => {
+        console.error('Error refreshing comments:', err);
+      },
+    });
+  }
+
   isCommentsOpen(postId: string): boolean {
     return this.expandedCommentPosts().has(postId);
   }
@@ -124,8 +140,58 @@ export class PostsComponent implements OnInit, AfterViewChecked, AfterViewInit, 
     return this.postCommentsMap()[postId] || [];
   }
 
-  ngOnInit(): void {
+  likePost(post: IPost): void {
+    const postId = post._id || post.id;
+    if (!postId) return;
 
+    this.postsService.LikePost(postId).subscribe({
+      next: () => {
+        const currentUserId = this._UserService.userInfo()?._id;
+        if (!currentUserId) return;
+
+        this.postsService.posts.update((posts) =>
+          posts.map((p) => {
+            if ((p._id || p.id) === postId) {
+              const likesArray = p.likes || [];
+              const hasLiked = likesArray.includes(currentUserId);
+              const updatedLikes = hasLiked
+                ? likesArray.filter((id) => id !== currentUserId)
+                : [...likesArray, currentUserId];
+
+              return {
+                ...p,
+                likes: updatedLikes,
+                likesCount: updatedLikes.length,
+              };
+            }
+            return p;
+          })
+        );
+      },
+      error: (err) => {
+        console.error('Error liking post:', err);
+      },
+    });
+  }
+
+  isPostLiked(post: IPost): boolean {
+    const currentUserId = this._UserService.userInfo()?._id;
+    return !!(currentUserId && post.likes?.includes(currentUserId));
+  }
+
+  ngOnInit(): void {
+    if (!this._UserService.userInfo()?._id) {
+      this._UserService.GetMyProfile().subscribe({
+        next: (res) => {
+          if (res?.data?.user) {
+            this._UserService.userInfo.set(res.data.user);
+          }
+        },
+        error: (err) => {
+          console.error('Error fetching profile in posts:', err);
+        },
+      });
+    }
   }
 
   ngAfterViewChecked() {

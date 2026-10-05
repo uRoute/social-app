@@ -3,10 +3,11 @@ import { LoginService } from '../../../core/auth/services/Login/login.service';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { CookieService } from 'ngx-cookie-service';
+import { UserService } from '../../../shared/services/User/user.service';
 
 @Component({
   selector: 'app-login',
-  imports: [ReactiveFormsModule,RouterLink],
+  imports: [ReactiveFormsModule, RouterLink],
   templateUrl: './login.component.html',
   styleUrl: './login.component.css',
 })
@@ -15,6 +16,7 @@ export class LoginComponent {
   resMessage: string = '';
   isSpinner: boolean = false;
   private readonly _LoginService = inject(LoginService);
+  private readonly _UserService = inject(UserService);
   private readonly _Router = inject(Router);
   private readonly _CookieService = inject(CookieService);
   loginForm: FormGroup = new FormGroup({
@@ -34,7 +36,9 @@ export class LoginComponent {
           this.isSpinner = false;
           this.resMessage = '';
           this._Router.navigate(['/feeds'])
-          this._CookieService.set('token',res.data.token)          
+          this._CookieService.set('token', res.data.token)
+          this._CookieService.set('userInfo', JSON.stringify(res.data.user))
+          this._UserService.userInfo.set(res.data.user)
         },
         error: (err) => {
           this.isSpinner = false;

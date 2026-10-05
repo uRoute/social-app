@@ -10,13 +10,13 @@ import { environment } from '../../../environments/environment.development';
 export class CommentsService {
   private _HttpClient = inject(HttpClient)
   private _CookieService = inject(CookieService)
-  header: object = {
-    headers: {
-      AUTHORIZATION: `Bearer ${this._CookieService.get('token')}`,
-    }
-  }
+
 
   GetPostComments(postId: string): Observable<any> {
-    return this._HttpClient.get(`${environment.baseURL}/posts/${postId}/comments?page=1&limit=10`, this.header)
+    return this._HttpClient.get(`${environment.baseURL}/posts/${postId}/comments?page=1&limit=10`)
+  }
+
+  CreateComment(commentData: FormData, postId: string): Observable<any> {
+    return this._HttpClient.post(`${environment.baseURL}/posts/${postId}/comments`, commentData)
   }
 }

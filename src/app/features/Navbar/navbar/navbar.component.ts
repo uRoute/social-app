@@ -1,7 +1,8 @@
-import { Component, effect, inject, input, OnInit, WritableSignal } from '@angular/core';
+import { Component, computed, effect, inject, input, OnInit } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { initFlowbite } from 'flowbite';
 import { UserService } from '../../../shared/services/User/user.service';
+import { ThemeService } from '../../../shared/services/theme/theme.service';
 
 @Component({
   selector: 'app-navbar',
@@ -10,9 +11,14 @@ import { UserService } from '../../../shared/services/User/user.service';
   styleUrl: './navbar.component.css',
 })
 export class NavbarComponent implements OnInit {
-  private _UserService = inject(UserService)
+  private _UserService = inject(UserService);
+  private _ThemeService = inject(ThemeService);
 
-  isLogged = input<boolean>(false)
+  isLogged = input<boolean>(false);
+  isDarkMode = this._ThemeService.isDarkMode;
+
+  // user data
+  currentUserData = computed(() => this._UserService.userInfo());
 
   constructor() {
     effect(() => {
@@ -29,7 +35,13 @@ export class NavbarComponent implements OnInit {
       initFlowbite();
     }
   }
+
+  toggleTheme(): void {
+    this._ThemeService.toggleTheme();
+  }
+
   signOut() {
-    this._UserService.LogOut()
+    this._UserService.LogOut();
   }
 }
+
