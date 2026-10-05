@@ -111,7 +111,7 @@ export class PostsService {
   SharePost(postId: string): Observable<any> {
     return this._HttpClient.post(`${environment.baseURL}/posts/${postId}/share`, '')
   }
-  CreatePost(postData: object): Observable<any> {
+  CreatePost(postData: FormData): Observable<any> {
     return this._HttpClient.post(`${environment.baseURL}/posts`, postData)
   }
   UpdatePost(postId: string): Observable<any> {
