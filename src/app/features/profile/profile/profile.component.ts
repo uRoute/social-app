@@ -174,13 +174,23 @@ export class ProfileComponent implements OnInit {
 
   onPhotoSelected(event: Event): void {
     const input = event.target as HTMLInputElement;
+    const formData = new FormData();
     if (input.files && input.files[0]) {
       const file = input.files[0];
-      const reader = new FileReader();
-      reader.onload = () => {
-        this.profileImage = reader.result as string;
-      };
-      reader.readAsDataURL(file);
+      formData.append('photo', file);
+      this._UserService.UpdateProfileImage(formData).subscribe({
+        next: (res) => {
+          console.log(res);
+        },
+        error: (err) => {
+          console.error(err);
+        }
+      })
+      // const reader = new FileReader();
+      // reader.onload = () => {
+      //   this.profileImage = reader.result as string;
+      // };
+      // reader.readAsDataURL(file);
     }
   }
 

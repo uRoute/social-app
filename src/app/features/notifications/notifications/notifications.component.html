@@ -1,1 +1,50 @@
-<p>notifications works!</p>
+<section class="my-3">
+
+    <div class="container bg-white rounded-lg shadow-md shadow-slate-200 p-5">
+        <div class="flex justify-between">
+            <div class="">
+                <h1 class="text-2xl font-bold">Notifications {{unreadCount() ? ': '+unreadCount()+' unread'
+                    :''}} </h1>
+                <p class="">See latest updates from your friends</p>
+            </div>
+            @if(unreadCount() > 0){
+            <div class="">
+                <button (click)="MarkAllNotificationsAsRead()"
+                    class="block bg-linear-to-r from-[#D9228A] to-[#4285E8] px-3 py-2 font-bold text-white text-lg cursor-pointer rounded-2xl hover:opacity-80 duration-200 ">Clear
+                    All</button>
+            </div>
+            }
+        </div>
+
+        <div class="notify mt-2">
+
+            @for(notify of Notifications() ; track notify._id){
+            <div [class.bg-indigo-50]="!notify.isRead"
+                class="flex items-center justify-between my-3 cursor-pointer hover:scale-[1.01] hover:shadow-lg hover:shadow-indigo-500/20 active:scale-[0.99] transition-all duration-300 gap-2 p-3 rounded-xl shadow-sm shadow-slate-200">
+                <div class="flex items-center gap-3">
+                    <img class="rounded-full size-16" [src]="notify.actor.photo" [alt]="notify.actor.name">
+                    <div class="flex flex-col">
+                        <span class="font-bold">{{notify.actor.name}} {{notify.type.split('_')[0]}} on your post
+                        </span>
+                        <span> {{notify.createdAt | date : 'short'}} </span>
+                    </div>
+                </div>
+
+                @if(!notify.isRead){
+                <div class="text-center">
+                    <button (click)="MarkNotificationAsRead(notify._id)"
+                        class="flex items-center justify-between gap-2 hover:bg-slate-50 p-2 rounded-lg duration-200 active:scale-95 cursor-pointer">
+                        <i class="fa-solid fa-check-double"></i>
+                        Mark as Read
+                    </button>
+                </div>
+                }
+            </div>
+            }
+
+        </div>
+
+
+    </div>
+
+</section>
