@@ -3,6 +3,7 @@ import { RouterLink, RouterLinkActive } from '@angular/router';
 import { initFlowbite } from 'flowbite';
 import { UserService } from '../../../shared/services/User/user.service';
 import { ThemeService } from '../../../shared/services/theme/theme.service';
+import { PwaService } from '../../../core/services/pwa/pwa.service';
 
 @Component({
   selector: 'app-navbar',
@@ -13,6 +14,7 @@ import { ThemeService } from '../../../shared/services/theme/theme.service';
 export class NavbarComponent implements OnInit {
   private _UserService = inject(UserService);
   private _ThemeService = inject(ThemeService);
+  readonly pwaService = inject(PwaService);
   isLogged = input<boolean>(false);
   isDarkMode = this._ThemeService.isDarkMode;
   currentUserData = computed(() => this._UserService.userInfo());

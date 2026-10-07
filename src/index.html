@@ -5,7 +5,33 @@
   <title>SocialApp</title>
   <base href="/">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="icon" type="image/x-icon" href="./Images/logo-resize.png">
+  <meta name="description" content="Connect, share, and communicate seamlessly with friends and community.">
+  
+  <!-- Manifest -->
+  <link rel="manifest" href="manifest.webmanifest">
+
+  <!-- Favicons -->
+  <link rel="icon" type="image/x-icon" href="favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="icons/favicon-16x16.png">
+
+  <!-- Apple iOS Touch Icons & Web App Capabilities -->
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+  <link rel="apple-touch-icon" sizes="152x152" href="icons/apple-touch-icon-152x152.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="icons/apple-touch-icon-180x180.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="SocialApp">
+
+  <!-- Theme Colors (Light & Dark) -->
+  <meta name="theme-color" content="#00298D" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#111827" media="(prefers-color-scheme: dark)">
+  <meta name="mobile-web-app-capable" content="yes">
+
+  <!-- Microsoft Tiles -->
+  <meta name="msapplication-TileColor" content="#00298D">
+  <meta name="msapplication-TileImage" content="icons/mstile-144x144.png">
+
   <script>
     (function () {
       try {
@@ -24,5 +50,11 @@
 </head>
 <body>
   <app-root></app-root>
+  <noscript>
+    <div style="padding: 2rem; text-align: center; font-family: sans-serif;">
+      <h2>JavaScript Required</h2>
+      <p>Please enable JavaScript in your browser to run SocialApp.</p>
+    </div>
+  </noscript>
 </body>
 </html>
