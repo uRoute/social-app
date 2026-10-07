@@ -60,5 +60,9 @@ export class UserService {
     return this._HttpClient.get(`${environment.baseURL}/users/${userId}/posts`)
   }
 
+  ChangePassword(data: object): Observable<any> {
+    return this._HttpClient.patch(`${environment.baseURL}/users/change-password`, data)
+  }
+
 
 }

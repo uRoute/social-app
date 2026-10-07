@@ -29,17 +29,16 @@ import { UserService } from '../../../../shared/services/User/user.service';
   styleUrl: './posts.component.css',
 })
 export class PostsComponent implements OnInit, AfterViewChecked, AfterViewInit, OnDestroy {
-  readonly postsService = inject(PostsService);
+  readonly _PostsService = inject(PostsService);
+  private observer?: IntersectionObserver;
   private _CommentsService = inject(CommentsService);
   private _UserService = inject(UserService);
-
   @ViewChild('sentinel') sentinel?: ElementRef<HTMLElement>;
-  private observer?: IntersectionObserver;
-
-  posts: Signal<IPost[]> = computed(() => this.postsService.posts());
-  isLoadingPosts: Signal<boolean> = computed(() => this.postsService.isLoadingPosts());
-  hasMorePosts: Signal<boolean> = computed(() => this.postsService.hasMorePosts());
-
+  currentUserData = computed(() => this._UserService.userInfo());
+  activeDropdownPostId = signal<string | null>(null);
+  posts: Signal<IPost[]> = computed(() => this._PostsService.posts());
+  isLoadingPosts: Signal<boolean> = computed(() => this._PostsService.isLoadingPosts());
+  hasMorePosts: Signal<boolean> = computed(() => this._PostsService.hasMorePosts());
   expandedCommentPosts = signal<Set<string>>(new Set<string>());
   postCommentsMap = signal<Record<string, IComment[]>>({});
   loadingCommentsPosts = signal<Set<string>>(new Set<string>());
@@ -49,7 +48,7 @@ export class PostsComponent implements OnInit, AfterViewChecked, AfterViewInit, 
       this.observer = new IntersectionObserver(
         (entries) => {
           if (entries[0].isIntersecting) {
-            this.postsService.loadNextPage();
+            this._PostsService.loadNextPage();
           }
         },
         {
@@ -71,7 +70,7 @@ export class PostsComponent implements OnInit, AfterViewChecked, AfterViewInit, 
       const scrollPosition = window.innerHeight + window.scrollY;
       const threshold = document.documentElement.scrollHeight - 600;
       if (scrollPosition >= threshold) {
-        this.postsService.loadNextPage();
+        this._PostsService.loadNextPage();
       }
     }
   }
@@ -144,12 +143,12 @@ export class PostsComponent implements OnInit, AfterViewChecked, AfterViewInit, 
     const postId = post._id || post.id;
     if (!postId) return;
 
-    this.postsService.LikePost(postId).subscribe({
+    this._PostsService.LikePost(postId).subscribe({
       next: () => {
         const currentUserId = this._UserService.userInfo()?._id;
         if (!currentUserId) return;
 
-        this.postsService.posts.update((posts) =>
+        this._PostsService.posts.update((posts) =>
           posts.map((p) => {
             if ((p._id || p.id) === postId) {
               const likesArray = p.likes || [];
@@ -200,4 +199,18 @@ export class PostsComponent implements OnInit, AfterViewChecked, AfterViewInit, 
 
   }
 
+
+  @HostListener('document:click')
+  onDocumentClick(): void {
+    this.activeDropdownPostId.set(null);
+  }
+
+  toggleDropdown(postId: string, event?: Event): void {
+    event?.stopPropagation();
+    this.activeDropdownPostId.update((current) => (current === postId ? null : postId));
+  }
+
+  closeDropdown(): void {
+    this.activeDropdownPostId.set(null);
+  }
 }

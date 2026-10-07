@@ -42,8 +42,35 @@
             </div>
 
             <div class="user-toggle-action">
-                <button type="button" class="text-gray-500 dark:text-white hover:text-gray-300 duration-150 p-1"><i
-                        class="fa-solid fa-sliders cursor-pointer"></i></button>
+                <!-- <button type="button" class="text-gray-500 dark:text-white hover:text-gray-300 duration-150 p-1"><i
+                        class="fa-solid fa-sliders cursor-pointer"></i></button> -->
+                <div class="relative inline-block">
+                    <button type="button" (click)="toggleDropdown(post._id, $event)"
+                        class="toggle-btn text-gray-500 dark:text-white hover:text-gray-300 duration-150 p-1">
+                        <i class="fa-solid fa-sliders cursor-pointer"></i>
+                    </button>
+                    @if (activeDropdownPostId() === (post._id)) {
+                    <div (click)="$event.stopPropagation()"
+                        class="dropdown-menu absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-lg shadow-lg p-2 z-20">
+                        <button type="button"
+                            class="block cursor-pointer rounded-md w-full text-left px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"><i
+                                class="fa-solid fa-bookmark"></i> Save
+                            Post</button>
+                        @if(post.user._id === currentUserData()?._id){
+                        <button type="button"
+                            class="block cursor-pointer rounded-md w-full text-left px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"><i
+                                class="fa-solid fa-pen-to-square"></i> Edit
+                            Post</button>
+                        <button type="button"
+                            class="block cursor-pointer rounded-md w-full text-left px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"><i
+                                class="fa-solid fa-trash"></i> Delete
+                            Post</button>
+                        }
+
+                    </div>
+                    }
+                </div>
+
             </div>
 
         </div>

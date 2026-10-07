@@ -13,13 +13,9 @@ import { ThemeService } from '../../../shared/services/theme/theme.service';
 export class NavbarComponent implements OnInit {
   private _UserService = inject(UserService);
   private _ThemeService = inject(ThemeService);
-
   isLogged = input<boolean>(false);
   isDarkMode = this._ThemeService.isDarkMode;
-
-  // user data
   currentUserData = computed(() => this._UserService.userInfo());
-
   constructor() {
     effect(() => {
       if (this.isLogged()) {

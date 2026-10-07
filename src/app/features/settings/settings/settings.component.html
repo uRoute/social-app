@@ -1,1 +1,133 @@
-<p>settings works!</p>
+<section class="dark:bg-gray-700/80 bg-white shadow-lg text-gray-500 dark:text-white p-3 my-3 rounded-lg">
+    <div class="container">
+        <h2 class="text-lg md:text-3xl font-bold main-text-colors py-2">Settings <i
+                class="fa-solid fa-screwdriver-wrench"></i>
+        </h2>
+        <h4 class="text-lg md:text-xl font-medium">Manage your preferences and account settings.</h4>
+    </div>
+
+    <div class="flex justify-between items-start">
+
+
+        <div class="p-2 flex-wrap flex gap-2 items-start justify-between md:w-1/2">
+            <div class="size-60 border-2 border-gray-400 p-2 rounded-full dark:border-white">
+                <img [src]="userData()?.photo" [alt]="`${userData().name}'s Profile Picture`" [title]="`${userData().name}'s
+                Profile Picture`" class="w-full object-cover rounded-full">
+            </div>
+            <div class="flex  flex-col gap-4 md:w-1/2 w-full p-2">
+
+                <div class="my-0.5">
+                    <input
+                        class="block w-full shadow border-gray-400 dark:border-gray-100 rounded-lg bg-slate-200 dark:bg-slate-800 p-2 font-bold dark:text-white"
+                        type="text" name="name" id="name" disabled [value]="userData()?.name">
+
+                </div>
+                <div class="my-0.5">
+                    <input
+                        class="block w-full shadow border-gray-400 dark:border-gray-100 rounded-lg bg-slate-200 dark:bg-slate-800 p-2 font-bold dark:text-white"
+                        type="email" name="email" id="email" disabled [value]="userData()?.email">
+
+                </div>
+                <div class="my-0.5">
+                    <input
+                        class="block w-full shadow border-gray-400 dark:border-gray-100 rounded-lg bg-slate-200 dark:bg-slate-800 p-2 font-bold dark:text-white"
+                        type="text" name="username" id="username" disabled [value]="userData()?.username">
+
+                </div>
+
+                <form #changeForm [formGroup]="changePasswordForm" (ngSubmit)="changePassword(changeForm)">
+                    <h2 class="text-lg font-bold  main-text-colors">Change Your Password</h2>
+                    <p class="text-lg bg-amber-500/30 rounded-md px-2 py-1 mb-2">Note: you will need to login
+                        again after changing your password.</p>
+                    <div class="change-password">
+                        <div class="my-2">
+                            @let userPassword = changePasswordForm.get('password');
+                            <label for="password" class="block mb-2.5 text-sm font-medium text-heading">Password</label>
+                            <input [class]="{
+                    'input-valid' : !userPassword?.errors && userPassword?.touched,
+                    'input-invalid' : userPassword?.errors && userPassword?.touched
+                }" autocomplete="off" type="password" id="password" formControlName="password"
+                                class="bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-base focus:ring-brand focus:border-brand block w-full px-3 py-2.5 shadow-xs placeholder:text-body"
+                                placeholder="pass***" required />
+                            @if(userPassword?.errors && userPassword?.touched){
+                            <div class="flex items-start sm:items-center p-4 my-3 text-sm text-fg-danger-strong rounded-base bg-danger-soft"
+                                role="alert">
+                                <svg class="w-4 h-4 me-2 shrink-0 mt-0.5 sm:mt-0" aria-hidden="true"
+                                    xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none"
+                                    viewBox="0 0 24 24">
+                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                                        stroke-width="2"
+                                        d="M10 11h2v5m-2 0h4m-2.592-8.5h.01M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                                </svg>
+                                @if(userPassword?.getError('required')){<p>-Password is required.</p>}
+                                @if(userPassword?.getError('minlength')){<p>-Password must be at least 8 characters
+                                    long.
+                                </p>}
+                                @if(userPassword?.getError('pattern')){<p>-Password must contain UPPERCASE, lowercase
+                                    and
+                                    numbers
+                                </p>}
+                            </div>
+                            }
+                        </div>
+                        <div class="my-2">
+                            @let userRePassword = changePasswordForm.get('newPassword');
+                            <label for="rePassword" class="block mb-2.5 text-sm font-medium text-heading">New
+                                password</label>
+                            <input [class]="{
+                    'input-valid' : !(changePasswordForm.errors || userRePassword?.errors) && userRePassword?.touched,
+                    'input-invalid' : (changePasswordForm.errors || userRePassword?.errors) && userRePassword?.touched
+                }" autocomplete="off" type="password" id="newPassword" formControlName="newPassword"
+                                class="bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-base focus:ring-brand focus:border-brand block w-full px-3 py-2.5 shadow-xs placeholder:text-body"
+                                placeholder="pass***" required />
+
+                            @if((changePasswordForm.errors || userRePassword?.errors) && userRePassword?.touched){
+                            <div class="flex items-start sm:items-center p-4 my-3 text-sm text-fg-danger-strong rounded-base bg-danger-soft"
+                                role="alert">
+                                <svg class="w-4 h-4 me-2 shrink-0 mt-0.5 sm:mt-0" aria-hidden="true"
+                                    xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none"
+                                    viewBox="0 0 24 24">
+                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                                        stroke-width="2"
+                                        d="M10 11h2v5m-2 0h4m-2.592-8.5h.01M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                                </svg>
+                                @if(userRePassword?.getError('required')){<p>-newPassword is required.</p>}
+                                @if(userRePassword?.getError('pattern')){<p>-newPassword must contain UPPERCASE,
+                                    lowercase
+                                    and
+                                    numbers</p>}
+                            </div>
+                            }
+                        </div>
+                        @if(resMsg()){
+                        <p class="text-sm font-medium bg-red-300 p-2 rounded-base text-black"> {{resMsg()}} </p>
+                        }
+                        <div class="w-3/4 mx-auto my-1">
+                            <button [disabled]="changePasswordForm.invalid" class="form-btn">
+                                @if(isSpinner()){<i class="fa-solid fa-circle-notch fa-spin-snap-8"></i>}
+                                @else {<i class="fa-solid fa-user-pen"></i>Change Password}
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+
+        <div class="flex flex-col gap-4">
+            <button type="button" (click)="toggleTheme()"
+                [attr.aria-label]="isDarkMode() ? 'Switch to light mode' : 'Switch to dark mode'"
+                [title]="isDarkMode() ? 'Switch to light mode' : 'Switch to dark mode'"
+                class="inline-flex items-center justify-center w-10 h-10 text-sm font-medium text-gray-700 dark:text-gray-200 bg-white/60 dark:bg-gray-800/60 hover:bg-white/90 dark:hover:bg-gray-700/80 border border-gray-200/60 dark:border-gray-700/60 backdrop-blur-md rounded-full shadow-xs hover:shadow-md focus:outline-none focus:ring-2 focus:ring-indigo-400 dark:focus:ring-indigo-500 transition-all duration-200 cursor-pointer">
+                @if (isDarkMode()) {
+                <i class="fa-solid fa-sun text-amber-400 text-lg transition-transform duration-300 hover:rotate-45"></i>
+                } @else {
+                <i
+                    class="fa-solid fa-moon text-indigo-600 text-lg transition-transform duration-300 -rotate-12 hover:rotate-0"></i>
+                }
+            </button>
+        </div>
+    </div>
+
+
+</section>
