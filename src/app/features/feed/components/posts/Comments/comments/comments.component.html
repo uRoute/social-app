@@ -31,8 +31,9 @@
                     <div class="comment-info max-w-lg flex flex-col items-center">
                         <p class="my-1 text-gray-800">{{postComment.content}}</p>
                         @if(postComment.image){
-                        <div class="w-32 h-32 rounded-lg">
-                            <img class="w-full h-full rounded-lg" [src]="postComment.image" [alt]="postComment.content">
+                        <div class="size-40 rounded-lg overflow-hidden">
+                            <img class="w-full h-full object-cover rounded-lg" [src]="postComment.image"
+                                [alt]="postComment.content">
                         </div>
                         }
                     </div>
@@ -55,8 +56,8 @@
     <div class="create-comment p-3 rounded-lg mt-3 bg-white">
         <form #commentForm (submit)="createNewComment($event, commentForm)">
             <div class="head flex items-center gap-1.5">
-                <div class="user-photo w-10 h-10 p-0.5 rounded-full border-2 border-gray-400">
-                    <img class="w-full h-full rounded-full" [src]="currentUserData?.photo"
+                <div class="user-photo size-12 p-0.5 rounded-full border-2 border-gray-400">
+                    <img class="w-full h-full object-cover rounded-full" [src]="currentUserData?.photo"
                         [alt]="currentUserData?.name">
                 </div>
                 <div class="user-name my-1">
