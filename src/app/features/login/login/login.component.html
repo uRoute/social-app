@@ -9,7 +9,8 @@
 
                 <div class="my-2">
                     @let userEmail = loginForm.get('email');
-                    <label for="email" class="block mb-2.5 text-sm font-medium text-heading">Email</label>
+                    <label for="email"
+                        class="block mb-2.5 text-sm font-medium text-heading">Email</label>
                     <input [class]="{
                         'input-valid' : !userEmail?.errors && userEmail?.touched,
                         'input-invalid' : userEmail?.errors && userEmail?.touched
