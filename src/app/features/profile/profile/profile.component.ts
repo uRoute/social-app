@@ -10,10 +10,11 @@ import { IComment } from '../../../core/models/Comment/icomment.interface';
 import { CreatePostComponent } from '../../feed/components/posts/Create-post/create-post/create-post.component';
 import { EditPostModalComponent } from '../../../shared/components/edit-post-modal/edit-post-modal.component';
 import { DeletePostModalComponent } from '../../../shared/components/delete-post-modal/delete-post-modal.component';
+import { SharePostModalComponent } from '../../../shared/components/share-post-modal/share-post-modal.component';
 
 @Component({
   selector: 'app-profile',
-  imports: [DatePipe, CommentsComponent, CreatePostComponent, EditPostModalComponent, DeletePostModalComponent],
+  imports: [DatePipe, CommentsComponent, CreatePostComponent, EditPostModalComponent, DeletePostModalComponent, SharePostModalComponent],
   templateUrl: './profile.component.html',
   styleUrl: './profile.component.css',
 })
@@ -34,6 +35,8 @@ export class ProfileComponent implements OnInit {
   selectedPostToEdit = signal<IPost | null>(null);
   isDeleteModalOpen = signal<boolean>(false);
   selectedPostToDelete = signal<IPost | null>(null);
+  isShareModalOpen = signal<boolean>(false);
+  selectedPostToShare = signal<IPost | null>(null);
 
   expandedCommentPosts = signal<Set<string>>(new Set<string>());
   postCommentsMap = signal<Record<string, IComment[]>>({});
@@ -128,6 +131,49 @@ export class ProfileComponent implements OnInit {
       },
       error: (err) => {
         console.error('Error refreshing comments:', err);
+      },
+    });
+  }
+
+  onCommentLiked(event: { commentId: string; postId: string; likes?: string[] }): void {
+    const currentUserId = this._UserService.userInfo()?._id;
+    if (!currentUserId) return;
+
+    this.postCommentsMap.update((map) => {
+      const comments = map[event.postId];
+      if (!comments) return map;
+      return {
+        ...map,
+        [event.postId]: comments.map((c) => {
+          if (c._id === event.commentId) {
+            const currentLikes = c.likes || [];
+            const hasLiked = currentLikes.some((like: any) =>
+              typeof like === 'string' ? like === currentUserId : like?._id === currentUserId
+            );
+            const updatedLikes = event.likes ?? (hasLiked
+              ? currentLikes.filter((id: any) => (typeof id === 'string' ? id : id?._id) !== currentUserId)
+              : [...currentLikes, currentUserId]);
+            return {
+              ...c,
+              likes: updatedLikes,
+            };
+          }
+          return c;
+        }),
+      };
+    });
+  }
+
+  likeComment(comment: IComment, postId: string): void {
+    const currentUserId = this._UserService.userInfo()?._id;
+    if (!currentUserId || !comment?._id || !postId) return;
+
+    this._CommentsService.LikeOrDislikeComment(comment._id, postId).subscribe({
+      next: () => {
+        this.onCommentLiked({ commentId: comment._id, postId });
+      },
+      error: (err) => {
+        console.error('Error liking comment:', err);
       },
     });
   }
@@ -280,7 +326,19 @@ export class ProfileComponent implements OnInit {
   onPostUpdated(updatedPost: IPost): void {
     const id = updatedPost._id || updatedPost.id;
     this.userPosts.update((posts) =>
-      posts.map((p) => ((p._id || p.id) === id ? { ...p, ...updatedPost } : p))
+      posts.map((p) => {
+        if ((p._id || p.id) === id) {
+          const merged = { ...p, ...updatedPost };
+          if (p.sharedPost && (!updatedPost.sharedPost || typeof updatedPost.sharedPost !== 'object' || !updatedPost.sharedPost.user)) {
+            merged.sharedPost = p.sharedPost;
+          }
+          if (p.isShare) {
+            merged.isShare = true;
+          }
+          return merged;
+        }
+        return p;
+      })
     );
   }
 
@@ -299,5 +357,29 @@ export class ProfileComponent implements OnInit {
     this.userPosts.update((posts) =>
       posts.filter((p) => (p._id || p.id) !== postId)
     );
+  }
+
+  openShareModal(post: IPost): void {
+    this.closeDropdown();
+    this.selectedPostToShare.set(post);
+    this.isShareModalOpen.set(true);
+  }
+
+  closeShareModal(): void {
+    this.isShareModalOpen.set(false);
+    this.selectedPostToShare.set(null);
+  }
+
+  onPostShared(event: { originalPostId: string; sharedPost?: IPost }): void {
+    this.userPosts.update((posts) =>
+      posts.map((p) =>
+        (p._id || p.id) === event.originalPostId
+          ? { ...p, sharesCount: (p.sharesCount || 0) + 1 }
+          : p
+      )
+    );
+    if (event.sharedPost) {
+      this.userPosts.update((posts) => [event.sharedPost!, ...posts]);
+    }
   }
 }

@@ -1,11 +1,12 @@
 import { Component, effect, inject, input, output, signal, WritableSignal } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { DatePipe } from '@angular/common';
 import { PostsService } from '../../../core/auth/services/Posts/posts.service';
 import { IPost } from '../../../core/models/Post/ipost.interface';
 
 @Component({
   selector: 'app-edit-post-modal',
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, DatePipe],
   templateUrl: './edit-post-modal.component.html',
   styleUrl: './edit-post-modal.component.css',
 })
@@ -44,6 +45,15 @@ export class EditPostModalComponent {
     });
   }
 
+  isSharedPost(): boolean {
+    const p = this.post();
+    return !!(p && (p.isShare || p.sharedPost));
+  }
+
+  isSharedPostObject(sp: any): boolean {
+    return !!(sp && typeof sp === 'object' && (sp.user || sp.body));
+  }
+
   handleImageSelect(event: Event): void {
     const inputEl = event.target as HTMLInputElement;
     if (inputEl.files && inputEl.files.length > 0) {
@@ -79,8 +89,9 @@ export class EditPostModalComponent {
 
     const content = (this.postContent.value || '').trim();
     const hasImage = !!this.newImageFile || !!this.existingImage();
+    const isShared = this.isSharedPost();
 
-    if (!content && !hasImage) {
+    if (!isShared && !content && !hasImage) {
       this.errorMessage.set('Post cannot be empty. Please enter some text or add an image.');
       return;
     }
@@ -102,9 +113,24 @@ export class EditPostModalComponent {
     this._PostsService.UpdatePost(postId, formData).subscribe({
       next: (res: any) => {
         const returnedPost = res?.data?.post || res?.post || res?.data;
+
+        // Preserve populated sharedPost and isShare flag.
+        // Route Misr PUT /posts/:id returns unpopulated sharedPost (string ID) or undefined.
+        const preservedSharedPost =
+          (returnedPost?.sharedPost && typeof returnedPost.sharedPost === 'object' && (returnedPost.sharedPost.user || returnedPost.sharedPost.body))
+            ? returnedPost.sharedPost
+            : currentPost.sharedPost;
+
+        const preservedIsShare =
+          typeof returnedPost?.isShare === 'boolean'
+            ? returnedPost.isShare
+            : (currentPost.isShare ?? !!currentPost.sharedPost);
+
         const updatedPost: IPost = {
           ...currentPost,
           ...(returnedPost || {}),
+          sharedPost: preservedSharedPost,
+          isShare: preservedIsShare,
           body: returnedPost?.body ?? content,
           image: this.newImagePreview() ?? (this.existingImage() ?? (returnedPost?.image || '')),
           privacy: this.postPrivacy.value || currentPost.privacy,

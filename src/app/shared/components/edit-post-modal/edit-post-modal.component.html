@@ -50,44 +50,83 @@
                     placeholder="What's on your mind?"></textarea>
             </div>
 
-            <!-- Image Previews -->
-            @if (newImagePreview()) {
-            <div class="relative rounded-xl overflow-hidden border border-slate-200 dark:border-gray-700 bg-slate-100 dark:bg-gray-900 group">
-                <span class="absolute top-2 left-2 px-2.5 py-0.5 bg-indigo-600 text-white text-[11px] font-bold rounded-full shadow-sm z-10">
-                    New Photo Selected
-                </span>
-                <img [src]="newImagePreview()" alt="New preview"
-                    class="w-full max-h-60 object-contain rounded-xl bg-black/5" />
-                <button type="button" (click)="removeNewImage()"
-                    class="absolute top-2 right-2 w-8 h-8 rounded-full bg-slate-900/70 hover:bg-slate-900 text-white flex items-center justify-center transition-colors shadow-md cursor-pointer">
-                    <i class="fa-solid fa-xmark"></i>
-                </button>
-            </div>
-            } @else if (existingImage()) {
-            <div class="relative rounded-xl overflow-hidden border border-slate-200 dark:border-gray-700 bg-slate-100 dark:bg-gray-900 group">
-                <span class="absolute top-2 left-2 px-2.5 py-0.5 bg-slate-800/80 text-white text-[11px] font-bold rounded-full shadow-sm z-10">
-                    Current Photo
-                </span>
-                <img [src]="existingImage()" alt="Current post image"
-                    class="w-full max-h-60 object-contain rounded-xl bg-black/5" />
-                <button type="button" (click)="removeExistingImage()"
-                    title="Remove image"
-                    class="absolute top-2 right-2 w-8 h-8 rounded-full bg-rose-600/80 hover:bg-rose-600 text-white flex items-center justify-center transition-colors shadow-md cursor-pointer">
-                    <i class="fa-solid fa-trash-can text-xs"></i>
-                </button>
+            <!-- If shared post, display preview of original post -->
+            @if (isSharedPost() && post()?.sharedPost && isSharedPostObject(post()?.sharedPost)) {
+            <div class="p-3.5 rounded-xl border border-slate-200 dark:border-gray-700 bg-slate-50/70 dark:bg-gray-900/40 space-y-2.5">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-8 h-8 rounded-full border border-slate-300 dark:border-gray-600 overflow-hidden shrink-0">
+                        <img class="w-full h-full object-cover"
+                            [src]="post()?.sharedPost?.user?.photo || './Images/default-profile.png'"
+                            [alt]="(post()?.sharedPost?.user?.name || 'Author') + ' photo'">
+                    </div>
+                    <div class="min-w-0">
+                        <h5 class="text-xs font-bold text-slate-900 dark:text-white truncate">
+                            {{ post()?.sharedPost?.user?.name }}
+                        </h5>
+                        <div class="text-[11px] text-slate-500 dark:text-gray-400 flex items-center gap-1 truncate">
+                            @if (post()?.sharedPost?.user?.username) {
+                            <span>@{{ post()?.sharedPost?.user?.username }} ·</span>
+                            }
+                            <span>{{ post()?.sharedPost?.createdAt | date: 'shortTime' }}</span>
+                        </div>
+                    </div>
+                </div>
+
+                @if (post()?.sharedPost?.body) {
+                <p class="text-xs text-slate-700 dark:text-slate-200 leading-relaxed">
+                    {{ post()?.sharedPost?.body }}
+                </p>
+                }
+
+                @if (post()?.sharedPost?.image) {
+                <div class="rounded-lg overflow-hidden max-h-48 bg-slate-200 dark:bg-gray-800">
+                    <img [src]="post()?.sharedPost?.image" [alt]="post()?.sharedPost?.body || 'Post image preview'"
+                        class="w-full h-full object-cover rounded-lg" />
+                </div>
+                }
             </div>
             }
 
-            <!-- Change Photo Upload Option -->
-            <div class="flex items-center justify-between pt-1">
-                <label for="edit-post-file"
-                    class="inline-flex items-center gap-2 px-3 py-1.5 text-xs font-semibold text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-950/40 hover:bg-indigo-100 dark:hover:bg-indigo-900/60 rounded-lg cursor-pointer transition-colors border border-indigo-100 dark:border-indigo-900">
-                    <i class="fa-solid fa-image text-sm"></i>
-                    <span>{{ (existingImage() || newImagePreview()) ? 'Change photo' : 'Add photo' }}</span>
-                </label>
-                <input id="edit-post-file" type="file" accept="image/*" class="hidden"
-                    (change)="handleImageSelect($event)" />
-            </div>
+            <!-- Image Previews (Only for non-shared posts) -->
+            @if (!isSharedPost()) {
+                @if (newImagePreview()) {
+                <div class="relative rounded-xl overflow-hidden border border-slate-200 dark:border-gray-700 bg-slate-100 dark:bg-gray-900 group">
+                    <span class="absolute top-2 left-2 px-2.5 py-0.5 bg-indigo-600 text-white text-[11px] font-bold rounded-full shadow-sm z-10">
+                        New Photo Selected
+                    </span>
+                    <img [src]="newImagePreview()" alt="New preview"
+                        class="w-full max-h-60 object-contain rounded-xl bg-black/5" />
+                    <button type="button" (click)="removeNewImage()"
+                        class="absolute top-2 right-2 w-8 h-8 rounded-full bg-slate-900/70 hover:bg-slate-900 text-white flex items-center justify-center transition-colors shadow-md cursor-pointer">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </div>
+                } @else if (existingImage()) {
+                <div class="relative rounded-xl overflow-hidden border border-slate-200 dark:border-gray-700 bg-slate-100 dark:bg-gray-900 group">
+                    <span class="absolute top-2 left-2 px-2.5 py-0.5 bg-slate-800/80 text-white text-[11px] font-bold rounded-full shadow-sm z-10">
+                        Current Photo
+                    </span>
+                    <img [src]="existingImage()" alt="Current post image"
+                        class="w-full max-h-60 object-contain rounded-xl bg-black/5" />
+                    <button type="button" (click)="removeExistingImage()"
+                        title="Remove image"
+                        class="absolute top-2 right-2 w-8 h-8 rounded-full bg-rose-600/80 hover:bg-rose-600 text-white flex items-center justify-center transition-colors shadow-md cursor-pointer">
+                        <i class="fa-solid fa-trash-can text-xs"></i>
+                    </button>
+                </div>
+                }
+
+                <!-- Change Photo Upload Option -->
+                <div class="flex items-center justify-between pt-1">
+                    <label for="edit-post-file"
+                        class="inline-flex items-center gap-2 px-3 py-1.5 text-xs font-semibold text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-950/40 hover:bg-indigo-100 dark:hover:bg-indigo-900/60 rounded-lg cursor-pointer transition-colors border border-indigo-100 dark:border-indigo-900">
+                        <i class="fa-solid fa-image text-sm"></i>
+                        <span>{{ (existingImage() || newImagePreview()) ? 'Change photo' : 'Add photo' }}</span>
+                    </label>
+                    <input id="edit-post-file" type="file" accept="image/*" class="hidden"
+                        (change)="handleImageSelect($event)" />
+                </div>
+            }
 
             <!-- Error Banner -->
             @if (errorMessage()) {

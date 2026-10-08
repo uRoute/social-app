@@ -26,7 +26,11 @@ export class CommentsService {
   }
 
   LikeOrDislikeComment(commentId: string, postId: string): Observable<any> {
-    return this._HttpClient.post(`${environment.baseURL}/posts/${postId}/comments/${commentId}/like`, {})
+    return this._HttpClient.put(`${environment.baseURL}/posts/${postId}/comments/${commentId}/like`, {})
+  }
+
+  LikeOrDislikeReply(replyId: string, commentId: string, postId: string): Observable<any> {
+    return this._HttpClient.post(`${environment.baseURL}/posts/${postId}/comments/${commentId}/replies/${replyId}/like`, {})
   }
 
   UpdateComment(commentData: FormData, commentId: string, postId: string): Observable<any> {
@@ -36,7 +40,4 @@ export class CommentsService {
   DeleteComment(commentId: string, postId: string): Observable<any> {
     return this._HttpClient.delete(`${environment.baseURL}/posts/${postId}/comments/${commentId}`)
   }
-
-
-
 }

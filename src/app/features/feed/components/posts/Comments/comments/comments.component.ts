@@ -15,13 +15,17 @@ export class CommentsComponent {
   private _CommentsService = inject(CommentsService);
   private _UserService = inject(UserService);
 
-  // user data
-  currentUserData = this._UserService.userInfo()
+  get currentUserData() {
+    return this._UserService.userInfo();
+  }
 
   postId = input<string>('');
   postComments = input<IComment[]>([]);
   isLoading = input<boolean>(false);
   commentCreated = output<string>();
+  commentLiked = output<{ commentId: string; postId: string; likes: string[] }>();
+
+  likingCommentIds: WritableSignal<Set<string>> = signal<Set<string>>(new Set<string>());
 
   commentContent: FormControl = new FormControl('');
   imageFile: File | null = null;
@@ -83,6 +87,62 @@ export class CommentsComponent {
       error: (err) => {
         console.error(err);
         this.isSubmitting.set(false);
+      },
+    });
+  }
+
+  isCommentLiked(comment: IComment): boolean {
+    const currentUserId = this._UserService.userInfo()?._id;
+    if (!currentUserId || !comment?.likes) return false;
+    return comment.likes.some((like: any) =>
+      typeof like === 'string' ? like === currentUserId : like?._id === currentUserId
+    );
+  }
+
+  isCommentLiking(commentId: string): boolean {
+    return this.likingCommentIds().has(commentId);
+  }
+
+  likeComment(comment: IComment): void {
+    const currentUserId = this._UserService.userInfo()?._id;
+    if (!currentUserId) return;
+
+    const currentPostId = this.postId() || comment.post;
+    if (!currentPostId || !comment._id) return;
+
+    if (this.likingCommentIds().has(comment._id)) return;
+
+    this.likingCommentIds.update((set) => new Set(set).add(comment._id));
+
+    this._CommentsService.LikeOrDislikeComment(comment._id, currentPostId).subscribe({
+      next: () => {
+        const likes = comment.likes || [];
+        const hasLiked = this.isCommentLiked(comment);
+        const updatedLikes = hasLiked
+          ? likes.filter((id: any) => (typeof id === 'string' ? id : id?._id) !== currentUserId)
+          : [...likes, currentUserId];
+
+        comment.likes = updatedLikes;
+
+        this.commentLiked.emit({
+          commentId: comment._id,
+          postId: currentPostId,
+          likes: updatedLikes,
+        });
+
+        this.likingCommentIds.update((set) => {
+          const updated = new Set(set);
+          updated.delete(comment._id);
+          return updated;
+        });
+      },
+      error: (err) => {
+        console.error('Error liking/unliking comment:', err);
+        this.likingCommentIds.update((set) => {
+          const updated = new Set(set);
+          updated.delete(comment._id);
+          return updated;
+        });
       },
     });
   }

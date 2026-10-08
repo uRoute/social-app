@@ -1,0 +1,137 @@
+@if (isOpen() && post()) {
+<div class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-in fade-in duration-200"
+    (click)="close()">
+    <div class="relative w-full max-w-lg bg-white dark:bg-gray-800 rounded-2xl shadow-2xl border border-slate-100 dark:border-gray-700 overflow-hidden"
+        (click)="$event.stopPropagation()">
+
+        <!-- Modal Header -->
+        <div class="flex items-center justify-between px-5 py-4 border-b border-slate-100 dark:border-gray-700">
+            <div class="flex items-center gap-2.5">
+                <div class="w-8 h-8 rounded-lg bg-sky-50 dark:bg-sky-900/40 text-sky-600 dark:text-sky-400 flex items-center justify-center font-bold">
+                    <i class="fa-solid fa-share-nodes"></i>
+                </div>
+                <div>
+                    <h3 class="text-lg font-bold text-slate-900 dark:text-white leading-tight">Share Post</h3>
+                    <p class="text-xs text-slate-500 dark:text-gray-400">Share this post with your followers</p>
+                </div>
+            </div>
+            <button type="button" (click)="close()"
+                class="w-8 h-8 flex items-center justify-center rounded-full text-slate-400 hover:text-slate-600 hover:bg-slate-100 dark:hover:bg-gray-700 dark:hover:text-white transition-colors cursor-pointer">
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+        </div>
+
+        <!-- Modal Body -->
+        <div class="p-5 space-y-4 max-h-[75vh] overflow-y-auto">
+
+            <!-- Current User Sharer Row -->
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-full border-2 border-slate-300 dark:border-gray-600 overflow-hidden shrink-0">
+                    <img class="w-full h-full object-cover"
+                        [src]="currentUser()?.photo || './Images/default-profile.png'"
+                        [alt]="(currentUser()?.name || 'User') + ' photo'">
+                </div>
+                <div>
+                    <h4 class="font-bold text-sm text-slate-900 dark:text-white">
+                        {{ currentUser()?.name || 'You' }}
+                    </h4>
+                    <span class="inline-flex items-center gap-1 text-[11px] font-semibold text-sky-600 dark:text-sky-400 bg-sky-50 dark:bg-sky-950/40 px-2 py-0.5 rounded-full border border-sky-100 dark:border-sky-900">
+                        <i class="fa-solid fa-earth-americas text-[10px]"></i>
+                        Sharing to Public Feed
+                    </span>
+                </div>
+            </div>
+
+            <!-- Optional Caption Textarea -->
+            <div>
+                <textarea [formControl]="shareComment" rows="3"
+                    class="w-full p-3 bg-slate-50 dark:bg-gray-900/60 text-slate-900 dark:text-white border border-slate-200 dark:border-gray-700 rounded-xl placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-sky-500 resize-none text-sm"
+                    placeholder="Say something about this post... (optional)"></textarea>
+            </div>
+
+            <!-- Embedded Preview of Original Post -->
+            <div class="p-3.5 rounded-xl border border-slate-200 dark:border-gray-700 bg-slate-50/70 dark:bg-gray-900/40 space-y-2.5">
+                <!-- Original Author Info -->
+                <div class="flex items-center gap-2.5">
+                    <div class="w-8 h-8 rounded-full border border-slate-300 dark:border-gray-600 overflow-hidden shrink-0">
+                        <img class="w-full h-full object-cover"
+                            [src]="post()?.user?.photo || './Images/default-profile.png'"
+                            [alt]="(post()?.user?.name || 'Author') + ' photo'">
+                    </div>
+                    <div class="min-w-0">
+                        <h5 class="text-xs font-bold text-slate-900 dark:text-white truncate">
+                            {{ post()?.user?.name }}
+                        </h5>
+                        <div class="text-[11px] text-slate-500 dark:text-gray-400 flex items-center gap-1 truncate">
+                            @if (post()?.user?.username) {
+                            <span>@{{ post()?.user?.username }} ·</span>
+                            }
+                            <span>{{ post()?.createdAt | date: 'shortTime' }}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Original Post Body -->
+                @if (post()?.body) {
+                <p class="text-xs text-slate-700 dark:text-slate-200 leading-relaxed line-clamp-4">
+                    {{ post()?.body }}
+                </p>
+                }
+
+                <!-- Original Post Image -->
+                @if (post()?.image) {
+                <div class="rounded-lg overflow-hidden max-h-48 bg-slate-200 dark:bg-gray-800">
+                    <img [src]="post()?.image" [alt]="post()?.body || 'Post image preview'"
+                        class="w-full h-full object-cover rounded-lg" />
+                </div>
+                }
+            </div>
+
+            <!-- Copy Link Button -->
+            <div class="flex items-center justify-between pt-1">
+                <button type="button" (click)="copyLink()"
+                    class="inline-flex items-center gap-2 px-3 py-1.5 text-xs font-semibold rounded-lg transition-colors cursor-pointer border"
+                    [class]="isCopied() 
+                        ? 'bg-emerald-50 text-emerald-600 border-emerald-200 dark:bg-emerald-950/40 dark:text-emerald-400 dark:border-emerald-900' 
+                        : 'bg-slate-100 text-slate-700 hover:bg-slate-200 border-slate-200 dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600 dark:border-gray-600'">
+                    @if (isCopied()) {
+                    <i class="fa-solid fa-check text-xs"></i>
+                    <span>Link Copied!</span>
+                    } @else {
+                    <i class="fa-solid fa-link text-xs"></i>
+                    <span>Copy Post Link</span>
+                    }
+                </button>
+            </div>
+
+            <!-- Error Banner -->
+            @if (errorMessage()) {
+            <div class="p-3 rounded-xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-900 text-rose-700 dark:text-rose-300 text-xs flex items-center gap-2">
+                <i class="fa-solid fa-circle-exclamation shrink-0"></i>
+                <span>{{ errorMessage() }}</span>
+            </div>
+            }
+
+        </div>
+
+        <!-- Modal Footer -->
+        <div class="flex items-center justify-end gap-3 px-5 py-3.5 bg-slate-50 dark:bg-gray-800/80 border-t border-slate-100 dark:border-gray-700">
+            <button type="button" (click)="close()" [disabled]="isLoading()"
+                class="px-4 py-2 text-sm font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-gray-700 rounded-xl transition-colors cursor-pointer disabled:opacity-50">
+                Cancel
+            </button>
+            <button type="button" (click)="submitShare()" [disabled]="isLoading()"
+                class="inline-flex items-center gap-2 px-5 py-2 text-sm font-semibold text-white bg-gradient-to-r from-sky-500 to-indigo-600 hover:from-sky-600 hover:to-indigo-700 rounded-xl shadow-sm transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed">
+                @if (isLoading()) {
+                <i class="fa-solid fa-circle-notch fa-spin"></i>
+                <span>Sharing...</span>
+                } @else {
+                <i class="fa-solid fa-share"></i>
+                <span>Share Now</span>
+                }
+            </button>
+        </div>
+
+    </div>
+</div>
+}

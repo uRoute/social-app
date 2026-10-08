@@ -157,6 +157,13 @@
         <div
             class="posts bg-white dark:bg-gray-700/50 p-3 lg:w-3/4 md:w-3/4 w-full mx-auto rounded-2xl my-3 shadow-sm border border-slate-100 dark:border-gray-700">
 
+            @if(post.isShare){
+            <div class="flex items-center gap-1.5 text-xs text-sky-600 dark:text-sky-400 font-semibold px-2 pt-1 pb-0.5">
+                <i class="fa-solid fa-share text-xs"></i>
+                <span>Shared a post</span>
+            </div>
+            }
+
             <div class="post-head flex p-1 items-center justify-between">
                 <div class="user-info p-0.5 flex gap-2 justify-between items-center">
                     @if(post.user.photo || userProfileData().photo){
@@ -231,6 +238,40 @@
                         [alt]="post.body || 'Post image'">
                 </div>
                 }
+
+                @if( post.sharedPost && (post.sharedPost.user || post.sharedPost.body) ){
+                <div class="my-2 p-3 rounded-xl border border-slate-200 dark:border-gray-700 bg-slate-50 dark:bg-gray-800/60">
+                    <div class="flex items-center gap-2 mb-2">
+                        <div class="w-8 h-8 rounded-full border border-slate-300 dark:border-gray-600 overflow-hidden shrink-0">
+                            <img class="w-full h-full object-cover rounded-full"
+                                [src]="post.sharedPost.user?.photo || './Images/default-profile.png'"
+                                [alt]="(post.sharedPost.user?.username || 'User') + '\'s photo'">
+                        </div>
+                        <div>
+                            <h5 class="text-sm font-bold text-gray-900 dark:text-white">
+                                {{ post.sharedPost.user?.name || 'User' }}
+                            </h5>
+                            <div class="text-gray-500 dark:text-gray-400 text-xs">
+                                <span class="mx-0.5">@{{ post.sharedPost.user?.username || 'user' }} ·</span>
+                                <span class="mx-0.5">{{ post.sharedPost.createdAt | date: 'shortTime' }}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    @if (post.sharedPost.body) {
+                    <p class="text-neutral-800 dark:text-gray-200 text-sm leading-relaxed mb-2">
+                        {{ post.sharedPost.body }}
+                    </p>
+                    }
+
+                    @if (post.sharedPost.image) {
+                    <div class="rounded-lg overflow-hidden max-h-96">
+                        <img class="w-full h-full object-cover rounded-lg" [src]="post.sharedPost.image"
+                            [alt]="post.sharedPost.body || 'Shared post image'">
+                    </div>
+                    }
+                </div>
+                }
             </div>
 
             <!-- Post Reactions: Like, Comment, Share -->
@@ -251,8 +292,9 @@
                     Comment @if((post.commentsCount || 0) > 0) { ({{ post.commentsCount }}) }
                 </button>
 
-                <button type="button" class="block w-1/3 rounded-xl p-1 hover:bg-slate-200 dark:hover:bg-gray-600 duration-150 cursor-pointer text-center">
-                    <i class="fa-solid fa-share"></i> Share
+                <button type="button" (click)="openShareModal(post)"
+                    class="block w-1/3 rounded-xl p-1 hover:bg-slate-200 dark:hover:bg-gray-600 duration-150 cursor-pointer text-center">
+                    <i class="fa-solid fa-share"></i> Share @if((post.sharesCount || 0) > 0) { ({{ post.sharesCount }}) }
                 </button>
             </div>
 
@@ -260,7 +302,8 @@
             <div class="mt-2 border-t border-slate-100 dark:border-gray-700 pt-2">
                 <app-comments [postId]="post._id || post.id" [postComments]="getPostComments(post._id || post.id)"
                     [isLoading]="isCommentsLoading(post._id || post.id)"
-                    (commentCreated)="onCommentCreated(post._id || post.id)">
+                    (commentCreated)="onCommentCreated(post._id || post.id)"
+                    (commentLiked)="onCommentLiked($event)">
                 </app-comments>
             </div>
             }
@@ -302,5 +345,10 @@
     <app-delete-post-modal [isOpen]="isDeleteModalOpen()" [post]="selectedPostToDelete()"
         (closeModal)="closeDeleteModal()" (postDeleted)="onPostDeleted($event)">
     </app-delete-post-modal>
+
+    <!-- Share Post Modal -->
+    <app-share-post-modal [isOpen]="isShareModalOpen()" [post]="selectedPostToShare()"
+        (closeModal)="closeShareModal()" (postShared)="onPostShared($event)">
+    </app-share-post-modal>
 
 </section>

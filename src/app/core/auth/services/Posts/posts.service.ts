@@ -88,7 +88,19 @@ export class PostsService {
 
   updatePostInState(postId: string, updated: Partial<IPost>): void {
     this.posts.update((prev) =>
-      prev.map((p) => ((p._id || p.id) === postId ? { ...p, ...updated } : p))
+      prev.map((p) => {
+        if ((p._id || p.id) === postId) {
+          const merged = { ...p, ...updated };
+          if (p.sharedPost && (!updated.sharedPost || typeof updated.sharedPost !== 'object' || !updated.sharedPost.user)) {
+            merged.sharedPost = p.sharedPost;
+          }
+          if (p.isShare) {
+            merged.isShare = true;
+          }
+          return merged;
+        }
+        return p;
+      })
     );
   }
 
@@ -205,8 +217,35 @@ export class PostsService {
   LikePost(postId: string): Observable<any> {
     return this._HttpClient.put(`${environment.baseURL}/posts/${postId}/like`, '')
   }
-  SharePost(postId: string): Observable<any> {
-    return this._HttpClient.post(`${environment.baseURL}/posts/${postId}/share`, '')
+  SharePost(postId: string, postData?: any): Observable<any> {
+    let payload: any = '';
+    if (postData) {
+      if (typeof postData === 'string') {
+        payload = postData.trim() ? { body: postData.trim() } : '';
+      } else if (typeof postData === 'object' && postData.body && postData.body.trim()) {
+        payload = { body: postData.body.trim() };
+      }
+    }
+    return this._HttpClient.post(`${environment.baseURL}/posts/${postId}/share`, payload);
+  }
+
+  incrementPostSharesCount(postId: string): void {
+    this.posts.update((prev) =>
+      prev.map((p) => {
+        if ((p._id || p.id) === postId) {
+          return {
+            ...p,
+            sharesCount: (p.sharesCount || 0) + 1,
+          };
+        }
+        return p;
+      })
+    );
+  }
+
+  addPostToFeed(newPost: IPost): void {
+    if (!newPost) return;
+    this.posts.update((prev) => [newPost, ...prev]);
   }
   CreatePost(postData: FormData): Observable<any> {
     return this._HttpClient.post(`${environment.baseURL}/posts`, postData)

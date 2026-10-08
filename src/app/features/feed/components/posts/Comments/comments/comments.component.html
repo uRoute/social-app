@@ -40,9 +40,21 @@
                 </div>
             </div>
 
-            <div class="flex gap-2 items-center justify-between text-gray-700">
-                <span><i class="fa-regular fa-heart"></i></span>
-                <span class="font-semibold">{{ postComment.likes.length }}</span>
+            <div class="flex items-center text-gray-700">
+                <button type="button"
+                    (click)="likeComment(postComment)"
+                    [disabled]="isCommentLiking(postComment._id)"
+                    class="flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold transition-all duration-200 cursor-pointer hover:bg-rose-50 dark:hover:bg-rose-950/30 group disabled:opacity-50 disabled:cursor-not-allowed"
+                    [class.text-rose-600]="isCommentLiked(postComment)"
+                    [class.text-gray-500]="!isCommentLiked(postComment)"
+                    [title]="isCommentLiked(postComment) ? 'Unlike comment' : 'Like comment'"
+                    [attr.aria-label]="isCommentLiked(postComment) ? 'Unlike comment' : 'Like comment'">
+                    <i class="fa-heart text-sm transition-transform duration-200 group-hover:scale-125 active:scale-90"
+                        [class.fa-solid]="isCommentLiked(postComment)"
+                        [class.fa-regular]="!isCommentLiked(postComment)"
+                        [class.text-rose-600]="isCommentLiked(postComment)"></i>
+                    <span class="font-medium text-xs">{{ postComment.likes.length || 0 }}</span>
+                </button>
             </div>
         </div>
 
