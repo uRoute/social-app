@@ -21,10 +21,12 @@ import { CommentsComponent } from './Comments/comments/comments.component';
 import { CommentsService } from '../../../../shared/services/comments.service';
 import { IComment } from '../../../../core/models/Comment/icomment.interface';
 import { UserService } from '../../../../shared/services/User/user.service';
+import { EditPostModalComponent } from '../../../../shared/components/edit-post-modal/edit-post-modal.component';
+import { DeletePostModalComponent } from '../../../../shared/components/delete-post-modal/delete-post-modal.component';
 
 @Component({
   selector: 'app-posts',
-  imports: [RouterLink, RouterLinkActive, CreatePostComponent, DatePipe, CommentsComponent],
+  imports: [RouterLink, CreatePostComponent, DatePipe, CommentsComponent, EditPostModalComponent, DeletePostModalComponent],
   templateUrl: './posts.component.html',
   styleUrl: './posts.component.css',
 })
@@ -36,6 +38,11 @@ export class PostsComponent implements OnInit, AfterViewChecked, AfterViewInit, 
   @ViewChild('sentinel') sentinel?: ElementRef<HTMLElement>;
   currentUserData = computed(() => this._UserService.userInfo());
   activeDropdownPostId = signal<string | null>(null);
+  isEditModalOpen = signal<boolean>(false);
+  selectedPostToEdit = signal<IPost | null>(null);
+  isDeleteModalOpen = signal<boolean>(false);
+  selectedPostToDelete = signal<IPost | null>(null);
+
   posts: Signal<IPost[]> = computed(() => this._PostsService.posts());
   isLoadingPosts: Signal<boolean> = computed(() => this._PostsService.isLoadingPosts());
   hasMorePosts: Signal<boolean> = computed(() => this._PostsService.hasMorePosts());
@@ -212,5 +219,60 @@ export class PostsComponent implements OnInit, AfterViewChecked, AfterViewInit, 
 
   closeDropdown(): void {
     this.activeDropdownPostId.set(null);
+  }
+
+  toggleSavePost(post: IPost): void {
+    const postId = post._id || post.id;
+    if (!postId) return;
+    this.closeDropdown();
+
+    this._PostsService.BookmarkPosts(postId).subscribe({
+      next: () => {
+        this._PostsService.toggleBookmarkInState(postId);
+      },
+      error: (err) => {
+        console.error('Error toggling bookmark on post:', err);
+      },
+    });
+  }
+
+  isPostSaved(post: IPost): boolean {
+    return this._PostsService.isPostSaved(post);
+  }
+
+  isPostAuthor(post: IPost): boolean {
+    const authorId = post.user?._id || (post.user as any)?.id;
+    const currentUserId = this.currentUserData()?._id || (this.currentUserData() as any)?.id;
+    return !!(authorId && currentUserId && authorId === currentUserId);
+  }
+
+  openEditModal(post: IPost): void {
+    this.closeDropdown();
+    this.selectedPostToEdit.set(post);
+    this.isEditModalOpen.set(true);
+  }
+
+  closeEditModal(): void {
+    this.isEditModalOpen.set(false);
+    this.selectedPostToEdit.set(null);
+  }
+
+  onPostUpdated(updatedPost: IPost): void {
+    // State is already updated in PostsService
+  }
+
+  openDeleteModal(post: IPost): void {
+    this.closeDropdown();
+    this.selectedPostToDelete.set(post);
+    this.isDeleteModalOpen.set(true);
+  }
+
+  closeDeleteModal(): void {
+    this.isDeleteModalOpen.set(false);
+    this.selectedPostToDelete.set(null);
+  }
+
+  onPostDeleted(postId: string): void {
+    // State is already updated in PostsService
   }
 }

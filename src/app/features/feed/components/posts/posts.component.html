@@ -9,7 +9,8 @@
 
         <div class="post-head flex p-1 items-center justify-between">
 
-            <div [routerLink]="['/userprofile', post.user._id]" class="user-info p-0.5 flex gap-2 justify-between items-center cursor-pointer hover:opacity-85 transition-opacity">
+            <div [routerLink]="['/userprofile', post.user._id]"
+                class="user-info p-0.5 flex gap-2 justify-between items-center cursor-pointer hover:opacity-85 transition-opacity">
                 @if(post.user.photo){
                 <div class="user-img w-10 h-10 rounded-full border-2 border-neutral-400 p-0.5">
                     <img class="w-full h-full rounded-full" [src]="post.user.photo"
@@ -45,26 +46,30 @@
                 <!-- <button type="button" class="text-gray-500 dark:text-white hover:text-gray-300 duration-150 p-1"><i
                         class="fa-solid fa-sliders cursor-pointer"></i></button> -->
                 <div class="relative inline-block">
-                    <button type="button" (click)="toggleDropdown(post._id, $event)"
+                    <button type="button" (click)="toggleDropdown(post._id || post.id, $event)"
                         class="toggle-btn text-gray-500 dark:text-white hover:text-gray-300 duration-150 p-1">
                         <i class="fa-solid fa-sliders cursor-pointer"></i>
                     </button>
-                    @if (activeDropdownPostId() === (post._id)) {
+                    @if (activeDropdownPostId() === (post._id || post.id)) {
                     <div (click)="$event.stopPropagation()"
-                        class="dropdown-menu absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-lg shadow-lg p-2 z-20">
-                        <button type="button"
-                            class="block cursor-pointer rounded-md w-full text-left px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"><i
-                                class="fa-solid fa-bookmark"></i> Save
-                            Post</button>
-                        @if(post.user._id === currentUserData()?._id){
-                        <button type="button"
-                            class="block cursor-pointer rounded-md w-full text-left px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"><i
-                                class="fa-solid fa-pen-to-square"></i> Edit
-                            Post</button>
-                        <button type="button"
-                            class="block cursor-pointer rounded-md w-full text-left px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"><i
-                                class="fa-solid fa-trash"></i> Delete
-                            Post</button>
+                        class="dropdown-menu absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-lg shadow-lg p-2 z-20 border border-slate-100 dark:border-gray-700 animate-in fade-in duration-150">
+                        <button type="button" (click)="toggleSavePost(post)"
+                            class="flex items-center gap-2 cursor-pointer rounded-md w-full text-left px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 text-sm">
+                            <i [class.fa-solid]="isPostSaved(post)" [class.fa-regular]="!isPostSaved(post)"
+                                [class.text-amber-500]="isPostSaved(post)" class="fa-bookmark w-4 text-center"></i>
+                            <span>{{ isPostSaved(post) ? 'Unsave Post' : 'Save Post' }}</span>
+                        </button>
+                        @if(isPostAuthor(post)){
+                        <button type="button" (click)="openEditModal(post)"
+                            class="flex items-center gap-2 cursor-pointer rounded-md w-full text-left px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 text-sm">
+                            <i class="fa-solid fa-pen-to-square w-4 text-center text-blue-500"></i>
+                            <span>Edit Post</span>
+                        </button>
+                        <button type="button" (click)="openDeleteModal(post)"
+                            class="flex items-center gap-2 cursor-pointer rounded-md w-full text-left px-4 py-2 text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-900/30 text-sm">
+                            <i class="fa-solid fa-trash w-4 text-center"></i>
+                            <span>Delete Post</span>
+                        </button>
                         }
 
                     </div>
@@ -147,5 +152,15 @@
         <p>You've caught up with all posts 🎉</p>
     </div>
     }
+
+    <!-- Edit Post Modal -->
+    <app-edit-post-modal [isOpen]="isEditModalOpen()" [post]="selectedPostToEdit()" (closeModal)="closeEditModal()"
+        (postUpdated)="onPostUpdated($event)">
+    </app-edit-post-modal>
+
+    <!-- Delete Post Modal -->
+    <app-delete-post-modal [isOpen]="isDeleteModalOpen()" [post]="selectedPostToDelete()"
+        (closeModal)="closeDeleteModal()" (postDeleted)="onPostDeleted($event)">
+    </app-delete-post-modal>
 
 </div>

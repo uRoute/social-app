@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, signal, WritableSignal } from '@angular/core';
+import { Component, computed, HostListener, inject, OnInit, signal, WritableSignal } from '@angular/core';
 import { IUser } from '../../../core/models/UserInfo/iuser.interface';
 import { UserService } from '../../../shared/services/User/user.service';
 import { DatePipe } from '@angular/common';
@@ -8,10 +8,12 @@ import { CommentsService } from '../../../shared/services/comments.service';
 import { PostsService } from '../../../core/auth/services/Posts/posts.service';
 import { IComment } from '../../../core/models/Comment/icomment.interface';
 import { CreatePostComponent } from '../../feed/components/posts/Create-post/create-post/create-post.component';
+import { EditPostModalComponent } from '../../../shared/components/edit-post-modal/edit-post-modal.component';
+import { DeletePostModalComponent } from '../../../shared/components/delete-post-modal/delete-post-modal.component';
 
 @Component({
   selector: 'app-profile',
-  imports: [DatePipe, CommentsComponent, CreatePostComponent],
+  imports: [DatePipe, CommentsComponent, CreatePostComponent, EditPostModalComponent, DeletePostModalComponent],
   templateUrl: './profile.component.html',
   styleUrl: './profile.component.css',
 })
@@ -25,6 +27,13 @@ export class ProfileComponent implements OnInit {
   user: WritableSignal<IUser> = signal({} as IUser);
   userPosts: WritableSignal<IPost[]> = signal([]);
   isLoadingPosts: WritableSignal<boolean> = signal(false);
+
+  currentUserData = computed(() => this._UserService.userInfo());
+  activeDropdownPostId = signal<string | null>(null);
+  isEditModalOpen = signal<boolean>(false);
+  selectedPostToEdit = signal<IPost | null>(null);
+  isDeleteModalOpen = signal<boolean>(false);
+  selectedPostToDelete = signal<IPost | null>(null);
 
   expandedCommentPosts = signal<Set<string>>(new Set<string>());
   postCommentsMap = signal<Record<string, IComment[]>>({});
@@ -206,5 +215,89 @@ export class ProfileComponent implements OnInit {
       };
       reader.readAsDataURL(file);
     }
+  }
+
+  @HostListener('document:click')
+  onDocumentClick(): void {
+    this.activeDropdownPostId.set(null);
+  }
+
+  toggleDropdown(postId: string, event?: Event): void {
+    event?.stopPropagation();
+    this.activeDropdownPostId.update((current) => (current === postId ? null : postId));
+  }
+
+  closeDropdown(): void {
+    this.activeDropdownPostId.set(null);
+  }
+
+  toggleSavePost(post: IPost): void {
+    const postId = post._id || post.id;
+    if (!postId) return;
+    this.closeDropdown();
+
+    this._PostsService.BookmarkPosts(postId).subscribe({
+      next: () => {
+        this._PostsService.toggleBookmarkInState(postId);
+        const isSaved = this._PostsService.isPostSaved(post);
+        this.userPosts.update((posts) =>
+          posts.map((p) =>
+            (p._id || p.id) === postId ? { ...p, bookmarked: isSaved } : p
+          )
+        );
+      },
+      error: (err) => {
+        console.error('Error toggling bookmark on post in profile:', err);
+      },
+    });
+  }
+
+  isPostSaved(post: IPost): boolean {
+    return this._PostsService.isPostSaved(post);
+  }
+
+  isPostAuthor(post: IPost): boolean {
+    const authorId = post.user?._id || (post.user as any)?.id;
+    const currentUserId =
+      this.currentUserData()?._id ||
+      (this.currentUserData() as any)?.id ||
+      this.user()?._id ||
+      this.user()?.id;
+    return !authorId || !currentUserId || authorId === currentUserId;
+  }
+
+  openEditModal(post: IPost): void {
+    this.closeDropdown();
+    this.selectedPostToEdit.set(post);
+    this.isEditModalOpen.set(true);
+  }
+
+  closeEditModal(): void {
+    this.isEditModalOpen.set(false);
+    this.selectedPostToEdit.set(null);
+  }
+
+  onPostUpdated(updatedPost: IPost): void {
+    const id = updatedPost._id || updatedPost.id;
+    this.userPosts.update((posts) =>
+      posts.map((p) => ((p._id || p.id) === id ? { ...p, ...updatedPost } : p))
+    );
+  }
+
+  openDeleteModal(post: IPost): void {
+    this.closeDropdown();
+    this.selectedPostToDelete.set(post);
+    this.isDeleteModalOpen.set(true);
+  }
+
+  closeDeleteModal(): void {
+    this.isDeleteModalOpen.set(false);
+    this.selectedPostToDelete.set(null);
+  }
+
+  onPostDeleted(postId: string): void {
+    this.userPosts.update((posts) =>
+      posts.filter((p) => (p._id || p.id) !== postId)
+    );
   }
 }

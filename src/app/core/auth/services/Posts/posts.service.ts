@@ -17,6 +17,81 @@ export class PostsService {
   readonly limit = 40;
 
 
+  savedPostIds: WritableSignal<Set<string>> = signal<Set<string>>(new Set<string>());
+
+  constructor() {
+    this.initSavedPosts();
+  }
+
+  initSavedPosts(): void {
+    this._HttpClient.get<any>(`${environment.baseURL}/users/bookmarks`).subscribe({
+      next: (res) => {
+        const bookmarks = res?.data?.bookmarks || res?.data?.posts || [];
+        const ids = bookmarks
+          .map((b: any) => b._id || b.id || (typeof b === 'string' ? b : ''))
+          .filter(Boolean);
+        if (ids.length > 0) {
+          this.savedPostIds.update((set) => {
+            const next = new Set(set);
+            ids.forEach((id: string) => next.add(id));
+            return next;
+          });
+        }
+      },
+      error: () => {
+        // Silent catch if unauthenticated
+      },
+    });
+  }
+
+  isPostSaved(post: IPost): boolean {
+    const id = post._id || post.id;
+    if (!id) return false;
+    if (this.savedPostIds().has(id)) return true;
+    return !!post.bookmarked;
+  }
+
+  toggleBookmarkInState(postId: string, isSaved?: boolean): void {
+    this.savedPostIds.update((set) => {
+      const next = new Set(set);
+      const willBeSaved = isSaved !== undefined ? isSaved : !next.has(postId);
+      if (willBeSaved) {
+        next.add(postId);
+      } else {
+        next.delete(postId);
+      }
+      return next;
+    });
+
+    this.posts.update((prev) =>
+      prev.map((p) => {
+        if ((p._id || p.id) === postId) {
+          return { ...p, bookmarked: this.savedPostIds().has(postId) };
+        }
+        return p;
+      })
+    );
+
+    if (this.activeTab() === 'saved' && !this.savedPostIds().has(postId)) {
+      this.posts.update((prev) => prev.filter((p) => (p._id || p.id) !== postId));
+    }
+  }
+
+  removePostFromState(postId: string): void {
+    this.posts.update((prev) => prev.filter((p) => (p._id || p.id) !== postId));
+    this.savedPostIds.update((set) => {
+      const next = new Set(set);
+      next.delete(postId);
+      return next;
+    });
+  }
+
+  updatePostInState(postId: string, updated: Partial<IPost>): void {
+    this.posts.update((prev) =>
+      prev.map((p) => ((p._id || p.id) === postId ? { ...p, ...updated } : p))
+    );
+  }
+
   LoadBasedOnTabPost(tab: string) {
     const cleanTab = tab?.trim().toLowerCase() || 'community';
     this.activeTab.set(cleanTab);
@@ -27,6 +102,17 @@ export class PostsService {
     this.GetPostsByTab(cleanTab, 1, this.limit).subscribe({
       next: (res) => {
         const fetchedPosts: IPost[] = res?.data?.posts || res?.data?.bookmarks || [];
+        if (cleanTab === 'saved') {
+          this.savedPostIds.update((set) => {
+            const next = new Set(set);
+            fetchedPosts.forEach((p) => {
+              const id = p._id || p.id;
+              if (id) next.add(id);
+            });
+            return next;
+          });
+          fetchedPosts.forEach((p) => (p.bookmarked = true));
+        }
         this.posts.set(fetchedPosts);
         this.isLoadingPosts.set(false);
 
@@ -54,6 +140,17 @@ export class PostsService {
     this.GetPostsByTab(currentTab, nextPage, this.limit).subscribe({
       next: (res) => {
         const fetchedPosts: IPost[] = res?.data?.posts || res?.data?.bookmarks || [];
+        if (currentTab === 'saved') {
+          this.savedPostIds.update((set) => {
+            const next = new Set(set);
+            fetchedPosts.forEach((p) => {
+              const id = p._id || p.id;
+              if (id) next.add(id);
+            });
+            return next;
+          });
+          fetchedPosts.forEach((p) => (p.bookmarked = true));
+        }
         if (fetchedPosts.length > 0) {
           const existingIds = new Set(this.posts().map((p) => p._id || p.id));
           const uniquePosts = fetchedPosts.filter((p) => !existingIds.has(p._id || p.id));
@@ -114,8 +211,8 @@ export class PostsService {
   CreatePost(postData: FormData): Observable<any> {
     return this._HttpClient.post(`${environment.baseURL}/posts`, postData)
   }
-  UpdatePost(postId: string): Observable<any> {
-    return this._HttpClient.put(`${environment.baseURL}/posts/${postId}`, '')
+  UpdatePost(postId: string, postData?: any): Observable<any> {
+    return this._HttpClient.put(`${environment.baseURL}/posts/${postId}`, postData ?? '')
   }
   DeletePost(postId: string): Observable<any> {
     return this._HttpClient.delete(`${environment.baseURL}/posts/${postId}`)
