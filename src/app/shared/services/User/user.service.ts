@@ -53,7 +53,11 @@ export class UserService {
   }
 
   FollowOrUnFollowUser(userId: string): Observable<any> {
-    return this._HttpClient.post(`${environment.baseURL}/users/${userId}/follow`, {})
+    return this._HttpClient.put(`${environment.baseURL}/users/${userId}/follow`, '')
+  }
+
+  GetUserProfile(userId: string): Observable<any> {
+    return this._HttpClient.get(`${environment.baseURL}/users/${userId}/profile`)
   }
 
   GetUserPosts(userId: string): Observable<any> {

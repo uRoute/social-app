@@ -9,7 +9,7 @@
 
         <div class="post-head flex p-1 items-center justify-between">
 
-            <div class="user-info p-0.5 flex gap-2 justify-between items-center">
+            <div [routerLink]="['/userprofile', post.user._id]" class="user-info p-0.5 flex gap-2 justify-between items-center cursor-pointer hover:opacity-85 transition-opacity">
                 @if(post.user.photo){
                 <div class="user-img w-10 h-10 rounded-full border-2 border-neutral-400 p-0.5">
                     <img class="w-full h-full rounded-full" [src]="post.user.photo"

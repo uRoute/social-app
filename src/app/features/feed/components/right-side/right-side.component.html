@@ -6,20 +6,20 @@
             <h3 class="font-medium text-gray-700"><i class="fa-solid fa-user-group"></i> Suggested Friends</h3>
             <div class="suggested-search my-2">
                 <label class="hidden" for="suggestedSeacrh">Search</label>
-                <input
+                <input [(ngModel)]="searchQuery"
                     class="bg-sky-50 focus:bg-transparent py-1 px-2 rounded-xl block w-full border-none outline-none focus:outline-0 focus:border-none focus:border-transparent text-gray-900 placeholder:text-gray-500"
-                    placeholder="Search by name ...." type="text" name="suggestedSeacrh" id="suggestedSeacrh">
+                    placeholder="Search by @user_name ...." type="text" name="suggestedSeacrh" id="suggestedSeacrh">
             </div>
         </div>
 
-        @for(suggest of suggestedFriends() ; track suggest._id){
+        @for(suggest of (suggestedFriends() | search : searchQuery()) ; track suggest._id){
         <div class="my-1 ">
 
             <div class="border-2 border-gray-200 rounded-full px-2 py-0.5">
 
                 <div class="friend-head flex justify-between items-center">
-                    <div
-                        class="friend-info flex items-center justify-between gap-1.5 hover:bg-slate-50/90 duration-200 p-1 rounded-lg">
+                    <div [routerLink]="['/userprofile', suggest._id]"
+                        class="cursor-pointer friend-info flex items-center justify-between gap-1.5 hover:bg-slate-50/90 duration-200 p-1 rounded-lg">
                         <div class="w-10 h-10 rounded-full p-0.5 border-2 border-gray-300">
                             <img class="w-full h-full rounded-full" [src]="suggest.photo"
                                 [alt]="suggest.username+'s photo'">
@@ -31,7 +31,7 @@
 
                     </div>
                     <div>
-                        <button
+                        <button (click)="followOrUnfollow(suggest._id)"
                             class="block py-1 px-2 rounded-4xl text-sm cursor-pointer font-bold bg-[#e7f3ff] text-indigo-500">
                             <i class="fa-solid fa-user-plus"></i> Follow</button>
                     </div>
